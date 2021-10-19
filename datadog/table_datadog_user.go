@@ -28,12 +28,12 @@ func tableDatadogUser(ctx context.Context) *plugin.Table {
 			{Name: "created_at", Type: proto.ColumnType_TIMESTAMP, Transform: transform.FromField("Attributes.CreatedAt"), Description: "Creation time of the user."},
 
 			// Other useful columns
-			{Name: "disabled", Type: proto.ColumnType_BOOL, Transform: transform.FromField("Attributes.Verified"), Description: "Indicates if the user is disabled."},
+			{Name: "disabled", Type: proto.ColumnType_BOOL, Transform: transform.FromField("Attributes.Disabled"), Description: "Indicates if the user is disabled."},
 			{Name: "icon", Type: proto.ColumnType_STRING, Transform: transform.FromField("Attributes.Icon"), Description: "URL of the user's icon."},
 			{Name: "modified_at", Type: proto.ColumnType_TIMESTAMP, Transform: transform.FromField("Attributes.ModifiedAt"), Description: "Time that the user was last modified."},
 			{Name: "service_account", Type: proto.ColumnType_BOOL, Transform: transform.FromField("Attributes.ServiceAccount"), Description: "Indicates if the user is a service account."},
 			{Name: "status", Type: proto.ColumnType_STRING, Transform: transform.FromField("Attributes.Status"), Description: "Status of the user."},
-			{Name: "title", Type: proto.ColumnType_STRING, Transform: transform.FromField("Attributes.Title", "Attributes.Name").Transform(ValueFromNullableStrint), Description: "Title of the user."},
+			{Name: "title", Type: proto.ColumnType_STRING, Transform: transform.FromField("Attributes.Title").Transform(ValueFromNullableStrint), Description: "Title of the user."},
 			{Name: "verified", Type: proto.ColumnType_BOOL, Transform: transform.FromField("Attributes.Verified"), Description: "Indicates the verification status of the user."},
 
 			// JSON fields
