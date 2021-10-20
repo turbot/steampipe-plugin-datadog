@@ -5,12 +5,10 @@ icon_url: "/images/plugins/turbot/datadog.svg"
 brand_color: "#FF9900"
 display_name: "Datadog"
 short_name: "datadog"
-description: "Steampipe plugin for querying instances, buckets, databases and more from AWS."
-og_description: "Query AWS with SQL! Open source CLI. No DB required."
-og_image: "/images/plugins/turbot/aws-social-graphic.png"
+description: "Steampipe plugin for querying dashboards, users, roles and more from Datadog."
+og_description: "Query Datadog with SQL! Open source CLI. No DB required."
+og_image: "/images/plugins/turbot/datadog-social-graphic.png"
 ---
-
-# WIP
 
 # Datadog + Steampipe
 
@@ -23,7 +21,6 @@ For example:
 ```sql
 select
   email,
-  id,
   name,
   status,
   disabled
@@ -32,13 +29,13 @@ from
 ```
 
 ```
-+---------------------+--------------------------------------+-----------------------+---------+----------+
-| email               | id                                   | name                  | status  | disabled |
-+---------------------+--------------------------------------+-----------------------+---------+----------+
-| subhajit@turbot.com | 0f550528-30e1-11ec-9255-da7ad0900002 | Subhajit Kumar Mondal | Active  | true     |
-| lalit@turbot.com    | 45c9984e-30a0-11ec-9224-da7ad0900002 | Lalit Bhardwaj        | Active  | true     |
-| subham@turbot.com   | 252dcb01-30e1-11ec-9255-da7ad0900002 | <null>                | Pending | false    |
-+---------------------+--------------------------------------+-----------------------+---------+----------+
++---------------------+-----------------------+---------+----------+
+| email               | name                  | status  | disabled |
++---------------------+-----------------------+---------+----------+
+| subham@turbot.com   | <null>                | Pending | false    |
+| subhajit@turbot.com | Subhajit Kumar Mondal | Active  | true     |
+| lalit@turbot.com    | Lalit Bhardwaj        | Active  | true     |
++---------------------+-----------------------+---------+----------+
 ```
 
 ## Documentation
