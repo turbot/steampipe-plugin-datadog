@@ -16,7 +16,8 @@ func Plugin(ctx context.Context) *plugin.Plugin {
 		},
 		DefaultTransform: transform.FromCamel(),
 		TableMap: map[string]*plugin.Table{
-			"datadog_user": tableDatadogUser(ctx),
+			"datadog_user":      tableDatadogUser(ctx),
+			"datadog_dashboard": tableDatadogDashboard(ctx),
 		},
 	}
 	return p

@@ -12,7 +12,7 @@ import (
 func tableDatadogUser(ctx context.Context) *plugin.Table {
 	return &plugin.Table{
 		Name:        "datadog_user",
-		Description: "Users in Datadog.",
+		Description: "Datadog dashboard resource.",
 		List: &plugin.ListConfig{
 			Hydrate: listUsers,
 			KeyColumns: plugin.KeyColumnSlice{
@@ -23,7 +23,7 @@ func tableDatadogUser(ctx context.Context) *plugin.Table {
 			// Top columns
 			{Name: "email", Type: proto.ColumnType_STRING, Transform: transform.FromField("Attributes.Email"), Description: "Email of the user."},
 			{Name: "id", Type: proto.ColumnType_STRING, Description: "Id of the user."},
-			{Name: "name", Type: proto.ColumnType_STRING, Transform: transform.FromField("Attributes.Name").Transform(ValueFromNullableStrint), Description: "Name of the user."},
+			{Name: "name", Type: proto.ColumnType_STRING, Transform: transform.FromField("Attributes.Name").Transform(valueFromNullableString), Description: "Name of the user."},
 			{Name: "handle", Type: proto.ColumnType_STRING, Transform: transform.FromField("Attributes.Handle"), Description: "Handle of the user."},
 			{Name: "created_at", Type: proto.ColumnType_TIMESTAMP, Transform: transform.FromField("Attributes.CreatedAt"), Description: "Creation time of the user."},
 
@@ -33,18 +33,20 @@ func tableDatadogUser(ctx context.Context) *plugin.Table {
 			{Name: "modified_at", Type: proto.ColumnType_TIMESTAMP, Transform: transform.FromField("Attributes.ModifiedAt"), Description: "Time that the user was last modified."},
 			{Name: "service_account", Type: proto.ColumnType_BOOL, Transform: transform.FromField("Attributes.ServiceAccount"), Description: "Indicates if the user is a service account."},
 			{Name: "status", Type: proto.ColumnType_STRING, Transform: transform.FromField("Attributes.Status"), Description: "Status of the user."},
-			{Name: "title", Type: proto.ColumnType_STRING, Transform: transform.FromField("Attributes.Title").Transform(ValueFromNullableStrint), Description: "Title of the user."},
 			{Name: "verified", Type: proto.ColumnType_BOOL, Transform: transform.FromField("Attributes.Verified"), Description: "Indicates the verification status of the user."},
 
 			// JSON fields
 			{Name: "roles", Type: proto.ColumnType_JSON, Transform: transform.FromField("Relationships.Roles"), Description: "A list containing type and ID of a role attached to user."},
 			{Name: "relationships", Type: proto.ColumnType_JSON, Description: "Relationships of the user object returned by the API."},
+
+			// common fields
+			{Name: "title", Type: proto.ColumnType_STRING, Transform: transform.FromField("Attributes.Title").Transform(valueFromNullableString), Description: "Title of the user."},
 		},
 	}
 }
 
 func listUsers(ctx context.Context, d *plugin.QueryData, _ *plugin.HydrateData) (interface{}, error) {
-	ctx, err := connect(ctx, d)
+	ctx, err := connectV2(ctx, d)
 	if err != nil {
 		plugin.Logger(ctx).Error("datadog_user.listUsers", "connection_error", err)
 		return nil, err
