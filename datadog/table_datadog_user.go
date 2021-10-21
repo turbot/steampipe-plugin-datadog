@@ -23,7 +23,7 @@ func tableDatadogUser(ctx context.Context) *plugin.Table {
 			// Top columns
 			{Name: "email", Type: proto.ColumnType_STRING, Transform: transform.FromField("Attributes.Email"), Description: "Email of the user."},
 			{Name: "id", Type: proto.ColumnType_STRING, Description: "Id of the user."},
-			{Name: "name", Type: proto.ColumnType_STRING, Transform: transform.FromField("Attributes.Name").Transform(valueFromNullableString), Description: "Name of the user."},
+			{Name: "name", Type: proto.ColumnType_STRING, Transform: transform.FromField("Attributes.Name").Transform(valueFromNullable), Description: "Name of the user."},
 			{Name: "handle", Type: proto.ColumnType_STRING, Transform: transform.FromField("Attributes.Handle"), Description: "Handle of the user."},
 			{Name: "created_at", Type: proto.ColumnType_TIMESTAMP, Transform: transform.FromField("Attributes.CreatedAt"), Description: "Creation time of the user."},
 
@@ -40,7 +40,7 @@ func tableDatadogUser(ctx context.Context) *plugin.Table {
 			{Name: "relationships", Type: proto.ColumnType_JSON, Description: "Relationships of the user object returned by the API."},
 
 			// common fields
-			{Name: "title", Type: proto.ColumnType_STRING, Transform: transform.FromField("Attributes.Title").Transform(valueFromNullableString), Description: "Title of the user."},
+			{Name: "title", Type: proto.ColumnType_STRING, Transform: transform.FromField("Attributes.Title").Transform(valueFromNullable), Description: "Title of the user."},
 		},
 	}
 }

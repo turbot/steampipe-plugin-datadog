@@ -109,17 +109,50 @@ func connectV2(ctx context.Context, d *plugin.QueryData) (context.Context, error
 
 //// TRANSFORM FUNCTIONS
 
-func valueFromNullableString(_ context.Context, d *transform.TransformData) (interface{}, error) {
+func valueFromNullable(_ context.Context, d *transform.TransformData) (interface{}, error) {
 	switch item := d.Value.(type) {
+	// datadogV1
 	case datadogV1.NullableString:
 		if item.IsSet() {
 			return item.Get(), nil
 		}
+	case datadogV1.NullableTime:
+		if item.IsSet() {
+			return item.Get(), nil
+		}
+	case datadogV1.NullableInt:
+		if item.IsSet() {
+			return item.Get(), nil
+		}
+	case datadogV1.NullableInt32:
+		if item.IsSet() {
+			return item.Get(), nil
+		}
+	case datadogV1.NullableInt64:
+		if item.IsSet() {
+			return item.Get(), nil
+		}
+	// datadogV2
 	case datadogV2.NullableString:
 		if item.IsSet() {
 			return item.Get(), nil
 		}
+	case datadogV2.NullableTime:
+		if item.IsSet() {
+			return item.Get(), nil
+		}
+	case datadogV2.NullableInt:
+		if item.IsSet() {
+			return item.Get(), nil
+		}
+	case datadogV2.NullableInt32:
+		if item.IsSet() {
+			return item.Get(), nil
+		}
+	case datadogV2.NullableInt64:
+		if item.IsSet() {
+			return item.Get(), nil
+		}
 	}
-
 	return nil, nil
 }
