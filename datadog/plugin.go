@@ -19,6 +19,8 @@ func Plugin(ctx context.Context) *plugin.Plugin {
 			"datadog_aws_integration": tableDatadogAwsIntegration(ctx),
 			"datadog_dashboard":       tableDatadogDashboard(ctx),
 			"datadog_monitor":         tableDatadogMonitor(ctx),
+			"datadog_permission":      tableDatadogPermission(ctx),
+			"datadog_role":            tableDatadogRole(ctx),
 			"datadog_user":            tableDatadogUser(ctx),
 		},
 	}
