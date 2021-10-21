@@ -36,7 +36,7 @@ func tableDatadogUser(ctx context.Context) *plugin.Table {
 			{Name: "verified", Type: proto.ColumnType_BOOL, Transform: transform.FromField("Attributes.Verified"), Description: "Indicates the verification status of the user."},
 
 			// JSON fields
-			{Name: "roles", Type: proto.ColumnType_JSON, Transform: transform.FromField("Relationships.Roles"), Description: "A list containing type and ID of a role attached to user."},
+			{Name: "role_ids", Type: proto.ColumnType_JSON, Transform: transform.FromField("Relationships.Roles.Data").Transform(roleList), Description: "A list containing id of roles attached to user."},
 			{Name: "relationships", Type: proto.ColumnType_JSON, Description: "Relationships of the user object returned by the API."},
 
 			// common fields
@@ -94,4 +94,18 @@ func listUsers(ctx context.Context, d *plugin.QueryData, _ *plugin.HydrateData) 
 	}
 
 	return nil, nil
+}
+
+//// TRANSFORM FUNCTION
+
+func roleList(ctx context.Context, d *transform.TransformData) (interface{}, error) {
+	roles := d.Value.(*[]datadog.RelationshipToRoleData)
+
+	var roleIds []string
+
+	for _, role := range *roles {
+		roleIds = append(roleIds, *role.Id)
+	}
+
+	return roleIds, nil
 }
