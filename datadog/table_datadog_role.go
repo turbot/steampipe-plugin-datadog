@@ -32,14 +32,11 @@ func tableDatadogRole(ctx context.Context) *plugin.Table {
 }
 
 func listRoles(ctx context.Context, d *plugin.QueryData, _ *plugin.HydrateData) (interface{}, error) {
-	ctx, err := connectV2(ctx, d)
+	ctx, apiClient, err := connectV2(ctx, d)
 	if err != nil {
 		plugin.Logger(ctx).Error("datadog_role.listRoles", "connection_error", err)
 		return nil, err
 	}
-
-	configuration := datadog.NewConfiguration()
-	apiClient := datadog.NewAPIClient(configuration)
 
 	// https://github.com/DataDog/datadog-api-client-go/blob/master/api/v2/datadog/docs/RolesApi.md#listroles
 	opts := datadog.ListRolesOptionalParameters{
@@ -82,14 +79,11 @@ func listRoles(ctx context.Context, d *plugin.QueryData, _ *plugin.HydrateData) 
 
 func listRoleUsers(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateData) (interface{}, error) {
 	role := h.Item.(datadog.Role)
-	ctx, err := connectV2(ctx, d)
+	ctx, apiClient, err := connectV2(ctx, d)
 	if err != nil {
 		plugin.Logger(ctx).Error("datadog_role.listRoleUsers", "connection_error", err)
 		return nil, err
 	}
-
-	configuration := datadog.NewConfiguration()
-	apiClient := datadog.NewAPIClient(configuration)
 
 	// https://github.com/DataDog/datadog-api-client-go/blob/master/api/v2/datadog/docs/RolesApi.md#listroles
 	opts := datadog.ListRoleUsersOptionalParameters{

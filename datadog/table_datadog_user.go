@@ -46,14 +46,11 @@ func tableDatadogUser(ctx context.Context) *plugin.Table {
 }
 
 func listUsers(ctx context.Context, d *plugin.QueryData, _ *plugin.HydrateData) (interface{}, error) {
-	ctx, err := connectV2(ctx, d)
+	ctx, apiClient, err := connectV2(ctx, d)
 	if err != nil {
 		plugin.Logger(ctx).Error("datadog_user.listUsers", "connection_error", err)
 		return nil, err
 	}
-
-	configuration := datadog.NewConfiguration()
-	apiClient := datadog.NewAPIClient(configuration)
 
 	// https://github.com/DataDog/datadog-api-client-go/blob/master/api/v2/datadog/docs/UsersApi.md#listusers
 	opts := datadog.ListUsersOptionalParameters{

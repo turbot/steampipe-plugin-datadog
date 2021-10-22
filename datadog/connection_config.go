@@ -8,6 +8,9 @@ import (
 type datadogConfig struct {
 	APIKey *string `cty:"api_key"`
 	AppKey *string `cty:"app_key"`
+	// By default it is https://api.datadoghq.com/
+	// If working with "EU" version of Datadog, use https://api.datadoghq.eu/
+	ApiURL *string `cty:"api_url"`
 }
 
 var ConfigSchema = map[string]*schema.Attribute{
@@ -15,6 +18,9 @@ var ConfigSchema = map[string]*schema.Attribute{
 		Type: schema.TypeString,
 	},
 	"app_key": {
+		Type: schema.TypeString,
+	},
+	"api_url": {
 		Type: schema.TypeString,
 	},
 }

@@ -2,16 +2,23 @@ package datadog
 
 import (
 	"context"
+	"fmt"
+	"net/http"
+	"net/url"
 	"os"
+	"strings"
+	"time"
 
 	datadogV1 "github.com/DataDog/datadog-api-client-go/api/v1/datadog"
 	datadogV2 "github.com/DataDog/datadog-api-client-go/api/v2/datadog"
+
 	"github.com/pkg/errors"
+	"github.com/turbot/steampipe-plugin-datadog/internal/transport"
 	"github.com/turbot/steampipe-plugin-sdk/plugin"
 	"github.com/turbot/steampipe-plugin-sdk/plugin/transform"
 )
 
-func connectV1(ctx context.Context, d *plugin.QueryData) (context.Context, error) {
+func connectV1(ctx context.Context, d *plugin.QueryData) (context.Context, *datadogV1.APIClient, error) {
 
 	// Load connection from cache, which preserves throttling protection etc
 	// Not sure if we should cache this --  as we are modifying the context in this function
@@ -23,6 +30,7 @@ func connectV1(ctx context.Context, d *plugin.QueryData) (context.Context, error
 	// Default to the env var settings
 	apiKey := os.Getenv("DD_CLIENT_API_KEY")
 	appKey := os.Getenv("DD_CLIENT_APP_KEY")
+	apiURL := "https://api.datadoghq.com/"
 
 	// Prefer config settings
 	config := GetConfig(d.Connection)
@@ -33,14 +41,17 @@ func connectV1(ctx context.Context, d *plugin.QueryData) (context.Context, error
 	if config.AppKey != nil {
 		appKey = *config.AppKey
 	}
+	if config.ApiURL != nil {
+		apiURL = *config.ApiURL
+	}
 
 	// Error if the minimum config is not set
 	if apiKey == "" {
-		return nil, errors.New("api_key must be configured")
+		return nil, nil, errors.New("api_key must be configured")
 	}
 
 	if appKey == "" {
-		return nil, errors.New("app_key must be configured")
+		return nil, nil, errors.New("app_key must be configured")
 	}
 
 	ctx = context.WithValue(ctx, datadogV1.ContextAPIKeys,
@@ -50,16 +61,46 @@ func connectV1(ctx context.Context, d *plugin.QueryData) (context.Context, error
 		},
 	)
 
+	if apiURL != "" {
+		parsedAPIURL, parseErr := url.Parse(apiURL)
+		if parseErr != nil {
+			return nil, nil, fmt.Errorf(`invalid API URL : %v`, parseErr)
+		}
+		if parsedAPIURL.Host == "" || parsedAPIURL.Scheme == "" {
+			return nil, nil, fmt.Errorf(`missing protocol or host : %v`, apiURL)
+		}
+
+		strings.Split(parsedAPIURL.Host, "/")
+		ctx = context.WithValue(ctx,
+			datadogV1.ContextServerVariables,
+			map[string]string{
+				"name":     parsedAPIURL.Host,
+				"protocol": parsedAPIURL.Scheme,
+			})
+	}
+
 	ctx = context.WithValue(
 		ctx,
 		datadogV1.ContextServerVariables,
 		map[string]string{"basePath": "v2"},
 	)
 
-	return ctx, nil
+	// Modify default client for retry handling
+	httpClientV1 := http.DefaultClient
+	ctOptions := transport.CustomTransportOptions{}
+	timeout := time.Duration(int64(60)) * time.Second
+	ctOptions.Timeout = &timeout
+	httpClientV1.Transport = transport.NewCustomTransport(httpClientV1.Transport, ctOptions)
+
+	configuration := datadogV1.NewConfiguration()
+	configuration.HTTPClient = httpClientV1
+	configuration.UserAgent = "Steampipe"
+	apiClient := datadogV1.NewAPIClient(configuration)
+
+	return ctx, apiClient, nil
 }
 
-func connectV2(ctx context.Context, d *plugin.QueryData) (context.Context, error) {
+func connectV2(ctx context.Context, d *plugin.QueryData) (context.Context, *datadogV2.APIClient, error) {
 
 	// Load connection from cache, which preserves throttling protection etc
 	// Not sure if we should cache this --  as we are modifying the context in this function
@@ -71,6 +112,7 @@ func connectV2(ctx context.Context, d *plugin.QueryData) (context.Context, error
 	// Default to the env var settings
 	apiKey := os.Getenv("DD_CLIENT_API_KEY")
 	AppKey := os.Getenv("DD_CLIENT_APP_KEY")
+	apiURL := "https://api.datadoghq.com/"
 
 	// Prefer config settings
 	config := GetConfig(d.Connection)
@@ -81,14 +123,17 @@ func connectV2(ctx context.Context, d *plugin.QueryData) (context.Context, error
 	if config.AppKey != nil {
 		AppKey = *config.AppKey
 	}
+	if config.ApiURL != nil {
+		apiURL = *config.ApiURL
+	}
 
 	// Error if the minimum config is not set
 	if apiKey == "" {
-		return nil, errors.New("api_key must be configured")
+		return nil, nil, errors.New("api_key must be configured")
 	}
 
 	if AppKey == "" {
-		return nil, errors.New("app_key must be configured")
+		return nil, nil, errors.New("app_key must be configured")
 	}
 
 	ctx = context.WithValue(ctx, datadogV2.ContextAPIKeys,
@@ -104,7 +149,37 @@ func connectV2(ctx context.Context, d *plugin.QueryData) (context.Context, error
 		map[string]string{"basePath": "v2"},
 	)
 
-	return ctx, nil
+	if apiURL != "" {
+		parsedAPIURL, parseErr := url.Parse(apiURL)
+		if parseErr != nil {
+			return nil, nil, fmt.Errorf(`invalid API URL : %v`, parseErr)
+		}
+		if parsedAPIURL.Host == "" || parsedAPIURL.Scheme == "" {
+			return nil, nil, fmt.Errorf(`missing protocol or host : %v`, apiURL)
+		}
+
+		strings.Split(parsedAPIURL.Host, "/")
+		ctx = context.WithValue(ctx,
+			datadogV2.ContextServerVariables,
+			map[string]string{
+				"name":     parsedAPIURL.Host,
+				"protocol": parsedAPIURL.Scheme,
+			})
+	}
+
+	// Modify default client for rety handling
+	httpClientV2 := http.DefaultClient
+	ctOptions := transport.CustomTransportOptions{}
+	timeout := time.Duration(int64(60)) * time.Second
+	ctOptions.Timeout = &timeout
+	httpClientV2.Transport = transport.NewCustomTransport(httpClientV2.Transport, ctOptions)
+
+	configuration := datadogV2.NewConfiguration()
+	configuration.HTTPClient = httpClientV2
+	configuration.UserAgent = "Steampipe"
+	apiClient := datadogV2.NewAPIClient(configuration)
+
+	return ctx, apiClient, nil
 }
 
 //// TRANSFORM FUNCTIONS

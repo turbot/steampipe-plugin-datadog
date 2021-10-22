@@ -45,14 +45,11 @@ func tableDatadogMonitor(ctx context.Context) *plugin.Table {
 }
 
 func listMonitors(ctx context.Context, d *plugin.QueryData, _ *plugin.HydrateData) (interface{}, error) {
-	ctx, err := connectV1(ctx, d)
+	ctx, apiClient, err := connectV1(ctx, d)
 	if err != nil {
 		plugin.Logger(ctx).Error("datadog_monitor.listMonitors", "connection_error", err)
 		return nil, err
 	}
-
-	configuration := datadog.NewConfiguration()
-	apiClient := datadog.NewAPIClient(configuration)
 
 	// https://github.com/DataDog/datadog-api-client-go/blob/master/api/v1/datadog/docs/MonitorsApi.md#listmonitors
 	// page := int64(0) // int64 | The page to start paginating from. If this argument is not specified, the request returns all monitors without pagination.

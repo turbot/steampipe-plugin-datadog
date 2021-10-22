@@ -13,7 +13,7 @@ func tableDatadogAwsIntegration(ctx context.Context) *plugin.Table {
 		Name:        "datadog_aws_integration",
 		Description: "Datadog AWS intgration resource.",
 		List: &plugin.ListConfig{
-			Hydrate: listAWSIntegrations,
+			Hydrate:    listAWSIntegrations,
 			KeyColumns: plugin.KeyColumnSlice{
 				// {Name: "status", Require: plugin.Optional},
 			},
@@ -40,14 +40,11 @@ func tableDatadogAwsIntegration(ctx context.Context) *plugin.Table {
 }
 
 func listAWSIntegrations(ctx context.Context, d *plugin.QueryData, _ *plugin.HydrateData) (interface{}, error) {
-	ctx, err := connectV1(ctx, d)
+	ctx, apiClient, err := connectV1(ctx, d)
 	if err != nil {
 		plugin.Logger(ctx).Error("datadog_aws_integration.listAWSIntegrations", "connection_error", err)
 		return nil, err
 	}
-
-	configuration := datadog.NewConfiguration()
-	apiClient := datadog.NewAPIClient(configuration)
 
 	// https://github.com/DataDog/datadog-api-client-go/blob/master/api/v2/datadog/docs/UsersApi.md#listusers
 	opts := datadog.ListAWSAccountsOptionalParameters{}

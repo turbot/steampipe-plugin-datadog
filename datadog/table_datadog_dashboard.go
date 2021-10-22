@@ -38,14 +38,11 @@ func tableDatadogDashboard(ctx context.Context) *plugin.Table {
 }
 
 func listDashboards(ctx context.Context, d *plugin.QueryData, _ *plugin.HydrateData) (interface{}, error) {
-	ctx, err := connectV1(ctx, d)
+	ctx, apiClient, err := connectV1(ctx, d)
 	if err != nil {
 		plugin.Logger(ctx).Error("datadog_dashboard.listDashboards", "connection_error", err)
 		return nil, err
 	}
-
-	configuration := datadog.NewConfiguration()
-	apiClient := datadog.NewAPIClient(configuration)
 
 	// https://github.com/DataDog/datadog-api-client-go/blob/master/api/v2/datadog/docs/UsersApi.md#listusers
 	opts := datadog.ListDashboardsOptionalParameters{}
