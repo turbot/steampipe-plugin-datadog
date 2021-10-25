@@ -14,6 +14,11 @@ func tableDatadogIntegrationAws(ctx context.Context) *plugin.Table {
 		Description: "Datadog AWS integration resource.",
 		List: &plugin.ListConfig{
 			Hydrate: listAWSIntegrations,
+			KeyColumns: plugin.KeyColumnSlice{
+				{Name: "account_id", Require: plugin.Optional},
+				{Name: "role_name", Require: plugin.Optional},
+				{Name: "access_key_id", Require: plugin.Optional},
+			},
 		},
 		Columns: []*plugin.Column{
 			// Top columns
@@ -43,8 +48,17 @@ func listAWSIntegrations(ctx context.Context, d *plugin.QueryData, _ *plugin.Hyd
 		return nil, err
 	}
 
-	// https://github.com/DataDog/datadog-api-client-go/blob/master/api/v2/datadog/docs/UsersApi.md#listusers
+	// https://github.com/DataDog/datadog-api-client-go/blob/master/api/v1/datadog/docs/AWSIntegrationApi.md#ListAWSAccounts
 	opts := datadog.ListAWSAccountsOptionalParameters{}
+	if d.KeyColumnQualString("account_id") != "" {
+		opts.AccountId = datadog.PtrString(d.KeyColumnQualString("account_id"))
+	}
+	if d.KeyColumnQualString("role_name") != "" {
+		opts.AccountId = datadog.PtrString(d.KeyColumnQualString("role_name"))
+	}
+	if d.KeyColumnQualString("access_key_id") != "" {
+		opts.AccountId = datadog.PtrString(d.KeyColumnQualString("access_key_id"))
+	}
 
 	resp, _, err := apiClient.AWSIntegrationApi.ListAWSAccounts(ctx, opts)
 	if err != nil {
