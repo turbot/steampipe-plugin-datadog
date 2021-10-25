@@ -82,8 +82,6 @@ func getDashboard(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateDat
 		return nil, nil
 	}
 
-	plugin.Logger(ctx).Info("AM I HERE ################################")
-
 	ctx, apiClient, err := connectV1(ctx, d)
 	if err != nil {
 		plugin.Logger(ctx).Error("datadog_dashboard.getDashboard", "connection_error", err)
