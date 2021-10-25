@@ -2,6 +2,7 @@ package datadog
 
 import (
 	"context"
+	"strings"
 
 	datadog "github.com/DataDog/datadog-api-client-go/api/v2/datadog"
 	"github.com/turbot/steampipe-plugin-sdk/grpc/proto"
@@ -13,8 +14,15 @@ func tableDatadogRole(ctx context.Context) *plugin.Table {
 	return &plugin.Table{
 		Name:        "datadog_role",
 		Description: "Datadog role resource.",
+		Get: &plugin.GetConfig{
+			Hydrate:    getRole,
+			KeyColumns: plugin.SingleColumn("id"),
+		},
 		List: &plugin.ListConfig{
 			Hydrate: listRoles,
+			KeyColumns: plugin.KeyColumnSlice{
+				{Name: "name", Require: plugin.Optional},
+			},
 		},
 		Columns: []*plugin.Column{
 			// Top columns
@@ -44,10 +52,13 @@ func listRoles(ctx context.Context, d *plugin.QueryData, _ *plugin.HydrateData) 
 		PageNumber: datadog.PtrInt64(int64(0)),
 	}
 
-	paging := true
-	count := int64(0)
+	name := d.KeyColumnQualString("name")
+	if name != "" {
+		opts.WithFilter(name)
+	}
 
-	for paging {
+	count := int64(0)
+	for {
 		resp, _, err := apiClient.RolesApi.ListRoles(ctx, opts)
 		if err != nil {
 			plugin.Logger(ctx).Error("datadog_role.listRoles", "query_error", err)
@@ -62,13 +73,51 @@ func listRoles(ctx context.Context, d *plugin.QueryData, _ *plugin.HydrateData) 
 			}
 		}
 
-		if count >= resp.Meta.Page.GetTotalCount() {
-			paging = false
+		// Break loop if using filter
+		if resp.Meta.Page.HasTotalFilteredCount() {
+			if count >= resp.Meta.Page.GetTotalFilteredCount() {
+				return nil, nil
+			}
 		}
-		opts.PageNumber = datadog.PtrInt64(*opts.PageNumber + 1)
+		// Break loop if not using filter
+		if count >= resp.Meta.Page.GetTotalCount() {
+			return nil, nil
+		}
+		opts.WithPageNumber(*opts.PageNumber + 1)
 	}
 
-	return nil, nil
+}
+
+func getRole(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateData) (interface{}, error) {
+	var roleID string
+
+	if h.Item != nil {
+		roleID = *h.Item.(datadog.Role).Id
+	} else {
+		roleID = d.KeyColumnQualString("id")
+	}
+
+	if strings.TrimSpace(roleID) == "" {
+		return nil, nil
+	}
+
+	ctx, apiClient, err := connectV2(ctx, d)
+	if err != nil {
+		plugin.Logger(ctx).Error("datadog_role.getRole", "connection_error", err)
+		return nil, err
+	}
+
+	// https://github.com/DataDog/datadog-api-client-go/blob/master/api/v2/datadog/docs/RolesApi.md#GetRole
+	resp, _, err := apiClient.RolesApi.GetRole(ctx, roleID)
+	if err != nil {
+		plugin.Logger(ctx).Error("datadog_role.getRole", "query_error", err)
+		if err.Error() == "404 Not Found" {
+			return nil, nil
+		}
+		return nil, err
+	}
+
+	return resp.GetData(), nil
 }
 
 func listRoleUsers(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateData) (interface{}, error) {
