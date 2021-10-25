@@ -57,7 +57,7 @@ func listMonitors(ctx context.Context, d *plugin.QueryData, _ *plugin.HydrateDat
 
 	name := d.KeyColumnQualString("name")
 	if name != "" {
-		opts.Name = datadog.PtrString(name)
+		opts.WithName(name)
 	}
 
 	resp, _, err := apiClient.MonitorsApi.ListMonitors(ctx, opts)

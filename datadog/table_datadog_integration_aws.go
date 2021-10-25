@@ -51,15 +51,16 @@ func listAWSIntegrations(ctx context.Context, d *plugin.QueryData, _ *plugin.Hyd
 	// https://github.com/DataDog/datadog-api-client-go/blob/master/api/v1/datadog/docs/AWSIntegrationApi.md#ListAWSAccounts
 	opts := datadog.ListAWSAccountsOptionalParameters{}
 	if d.KeyColumnQualString("account_id") != "" {
-		opts.AccountId = datadog.PtrString(d.KeyColumnQualString("account_id"))
+		opts.WithAccountId(d.KeyColumnQualString("account_id"))
 	}
 	if d.KeyColumnQualString("role_name") != "" {
-		opts.AccountId = datadog.PtrString(d.KeyColumnQualString("role_name"))
+		opts.WithRoleName(d.KeyColumnQualString("role_name"))
 	}
 	if d.KeyColumnQualString("access_key_id") != "" {
-		opts.AccountId = datadog.PtrString(d.KeyColumnQualString("access_key_id"))
+		opts.WithAccessKeyId(d.KeyColumnQualString("access_key_id"))
 	}
 
+	// Paging not supported by this API as of Date 10-25-2021
 	resp, _, err := apiClient.AWSIntegrationApi.ListAWSAccounts(ctx, opts)
 	if err != nil {
 		plugin.Logger(ctx).Error("datadog_integration_aws.listAWSIntegrations", "query_error", err)

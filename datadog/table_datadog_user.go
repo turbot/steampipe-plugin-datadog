@@ -2,6 +2,7 @@ package datadog
 
 import (
 	"context"
+	"strings"
 
 	datadog "github.com/DataDog/datadog-api-client-go/api/v2/datadog"
 	"github.com/turbot/steampipe-plugin-sdk/grpc/proto"
@@ -13,6 +14,10 @@ func tableDatadogUser(ctx context.Context) *plugin.Table {
 	return &plugin.Table{
 		Name:        "datadog_user",
 		Description: "Datadog dashboard resource.",
+		Get: &plugin.GetConfig{
+			Hydrate:    getUser,
+			KeyColumns: plugin.SingleColumn("id"),
+		},
 		List: &plugin.ListConfig{
 			Hydrate: listUsers,
 			KeyColumns: plugin.KeyColumnSlice{
@@ -62,7 +67,7 @@ func listUsers(ctx context.Context, d *plugin.QueryData, _ *plugin.HydrateData) 
 
 	fiterStatus := d.KeyColumnQualString("status")
 	if fiterStatus != "" {
-		opts.FilterStatus = datadog.PtrString(fiterStatus)
+		opts.WithFilterStatus(fiterStatus)
 	}
 
 	paging := true
@@ -83,13 +88,52 @@ func listUsers(ctx context.Context, d *plugin.QueryData, _ *plugin.HydrateData) 
 			}
 		}
 
-		if count >= resp.Meta.Page.GetTotalCount() {
-			paging = false
+		// Break loop if using filter
+		if resp.Meta.Page.HasTotalFilteredCount() {
+			if count >= resp.Meta.Page.GetTotalFilteredCount() {
+				return nil, nil
+			}
 		}
-		opts.PageNumber = datadog.PtrInt64(*opts.PageNumber + 1)
+		// Break loop if not using filter
+		if count >= resp.Meta.Page.GetTotalCount() {
+			return nil, nil
+		}
+		opts.WithPageNumber(*opts.PageNumber + 1)
 	}
 
 	return nil, nil
+}
+
+func getUser(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateData) (interface{}, error) {
+	var userID string
+
+	if h.Item != nil {
+		userID = *h.Item.(datadog.User).Id
+	} else {
+		userID = d.KeyColumnQualString("id")
+	}
+
+	if strings.TrimSpace(userID) == "" {
+		return nil, nil
+	}
+
+	ctx, apiClient, err := connectV2(ctx, d)
+	if err != nil {
+		plugin.Logger(ctx).Error("datadog_role.getUser", "connection_error", err)
+		return nil, err
+	}
+
+	// https: //github.com/DataDog/datadog-api-client-go/blob/master/api/v2/datadog/docs/UsersApi.md#GetUser
+	resp, _, err := apiClient.UsersApi.GetUser(ctx, userID)
+	if err != nil {
+		plugin.Logger(ctx).Error("datadog_role.getUser", "query_error", err)
+		if err.Error() == "404 Not Found" {
+			return nil, nil
+		}
+		return nil, err
+	}
+
+	return resp.GetData(), nil
 }
 
 //// TRANSFORM FUNCTION
