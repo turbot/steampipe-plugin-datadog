@@ -8,15 +8,12 @@ import (
 	"github.com/turbot/steampipe-plugin-sdk/plugin"
 )
 
-func tableDatadogAwsIntegration(ctx context.Context) *plugin.Table {
+func tableDatadogIntegrationAws(ctx context.Context) *plugin.Table {
 	return &plugin.Table{
-		Name:        "datadog_aws_integration",
-		Description: "Datadog AWS intgration resource.",
+		Name:        "datadog_integration_aws",
+		Description: "Datadog AWS integration resource.",
 		List: &plugin.ListConfig{
-			Hydrate:    listAWSIntegrations,
-			KeyColumns: plugin.KeyColumnSlice{
-				// {Name: "status", Require: plugin.Optional},
-			},
+			Hydrate: listAWSIntegrations,
 		},
 		Columns: []*plugin.Column{
 			// Top columns
@@ -42,7 +39,7 @@ func tableDatadogAwsIntegration(ctx context.Context) *plugin.Table {
 func listAWSIntegrations(ctx context.Context, d *plugin.QueryData, _ *plugin.HydrateData) (interface{}, error) {
 	ctx, apiClient, err := connectV1(ctx, d)
 	if err != nil {
-		plugin.Logger(ctx).Error("datadog_aws_integration.listAWSIntegrations", "connection_error", err)
+		plugin.Logger(ctx).Error("datadog_integration_aws.listAWSIntegrations", "connection_error", err)
 		return nil, err
 	}
 
@@ -51,13 +48,12 @@ func listAWSIntegrations(ctx context.Context, d *plugin.QueryData, _ *plugin.Hyd
 
 	resp, _, err := apiClient.AWSIntegrationApi.ListAWSAccounts(ctx, opts)
 	if err != nil {
-		plugin.Logger(ctx).Error("datadog_aws_integration.listAWSIntegrations", "query_error", err)
+		plugin.Logger(ctx).Error("datadog_integration_aws.listAWSIntegrations", "query_error", err)
 	}
 
 	for _, account := range resp.GetAccounts() {
 		d.StreamListItem(ctx, account)
 		// Check if context has been cancelled or if the limit has been hit (if specified)
-		// if there is a limit, it will return the number of rows required to reach this limit
 		if d.QueryStatus.RowsRemaining(ctx) == 0 {
 			return nil, nil
 		}

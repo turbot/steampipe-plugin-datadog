@@ -14,9 +14,9 @@ func Plugin(ctx context.Context) *plugin.Plugin {
 			NewInstance: ConfigInstance,
 			Schema:      ConfigSchema,
 		},
-		DefaultTransform: transform.FromCamel(),
+		DefaultTransform: transform.FromJSONTag(),
 		TableMap: map[string]*plugin.Table{
-			"datadog_aws_integration": tableDatadogAwsIntegration(ctx),
+			"datadog_integration_aws": tableDatadogIntegrationAws(ctx),
 			"datadog_dashboard":       tableDatadogDashboard(ctx),
 			"datadog_monitor":         tableDatadogMonitor(ctx),
 			"datadog_permission":      tableDatadogPermission(ctx),

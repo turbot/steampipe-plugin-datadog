@@ -15,9 +15,6 @@ func tableDatadogDashboard(ctx context.Context) *plugin.Table {
 		Description: "Users in Datadog.",
 		List: &plugin.ListConfig{
 			Hydrate: listDashboards,
-			// KeyColumns: plugin.KeyColumnSlice{
-			// 	{Name: "status", Require: plugin.Optional},
-			// },
 		},
 		Columns: []*plugin.Column{
 			// Top columns
@@ -55,7 +52,6 @@ func listDashboards(ctx context.Context, d *plugin.QueryData, _ *plugin.HydrateD
 	for _, dashboard := range resp.GetDashboards() {
 		d.StreamListItem(ctx, dashboard)
 		// Check if context has been cancelled or if the limit has been hit (if specified)
-		// if there is a limit, it will return the number of rows required to reach this limit
 		if d.QueryStatus.RowsRemaining(ctx) == 0 {
 			return nil, nil
 		}

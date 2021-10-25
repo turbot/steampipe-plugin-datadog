@@ -44,11 +44,6 @@ func listRoles(ctx context.Context, d *plugin.QueryData, _ *plugin.HydrateData) 
 		PageNumber: datadog.PtrInt64(int64(0)),
 	}
 
-	// fiterStatus := d.KeyColumnQualString("status")
-	// if fiterStatus != "" {
-	// 	opts.FilterStatus = datadog.PtrString(fiterStatus)
-	// }
-
 	paging := true
 	count := int64(0)
 
@@ -62,7 +57,6 @@ func listRoles(ctx context.Context, d *plugin.QueryData, _ *plugin.HydrateData) 
 			count++
 			d.StreamListItem(ctx, role)
 			// Check if context has been cancelled or if the limit has been hit (if specified)
-			// if there is a limit, it will return the number of rows required to reach this limit
 			if d.QueryStatus.RowsRemaining(ctx) == 0 {
 				return nil, nil
 			}
