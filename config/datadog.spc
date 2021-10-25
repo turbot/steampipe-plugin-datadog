@@ -2,12 +2,14 @@ connection "datadog" {
   plugin = "datadog"
 
   # Authentication - API Key
+  # Get your API key from https://app.datadoghq.com/organization-settings/api-keys
   # Steampipe will resolve the API key in below order:
   #  1. The "api_key" specified here in the config
   #  2. The `DD_CLIENT_API_KEY` environment variable
   # api_key   = "1a2345bc6d78e9d98fa7bcd6e5ef56a7"
 
   # Authentication - APP Key
+  # Get your APP key from https://app.datadoghq.com/organization-settings/application-keys
   # Steampipe will resolve the APP key in below order:
   #  1. The "app_key" specified here in the config
   #  2. The `DD_CLIENT_APP_KEY` environment variable
