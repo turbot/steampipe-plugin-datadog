@@ -32,7 +32,7 @@ func tableDatadogMonitor(ctx context.Context) *plugin.Table {
 			{Name: "modified_at", Type: proto.ColumnType_TIMESTAMP, Transform: transform.FromField("Modified"), Description: "Last timestamp when the monitor was edited."},
 			{Name: "multi", Type: proto.ColumnType_BOOL, Description: "Whether or not the monitor is broken down on different groups."},
 			{Name: "overall_state", Type: proto.ColumnType_STRING, Description: "Current state of the monitor."},
-			{Name: "priority", Type: proto.ColumnType_INT, Transform: transform.FromJSONTag().Transform(valueFromNullable), Description: "Integer from 1 (high) to 5 (low) indicating alert severity."},
+			{Name: "priority", Type: proto.ColumnType_INT, Transform: transform.FromField("Priority").Transform(valueFromNullable), Description: "Integer from 1 (high) to 5 (low) indicating alert severity."},
 			{Name: "query", Type: proto.ColumnType_STRING, Description: "The monitor query."},
 
 			// JSON fields

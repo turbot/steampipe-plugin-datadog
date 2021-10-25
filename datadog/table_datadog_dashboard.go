@@ -27,7 +27,7 @@ func tableDatadogDashboard(ctx context.Context) *plugin.Table {
 			{Name: "author_handle", Type: proto.ColumnType_STRING, Description: "Identifier of the dashboard author."},
 			{Name: "created_at", Type: proto.ColumnType_TIMESTAMP, Description: "Creation date of the dashboard."},
 
-			{Name: "description", Type: proto.ColumnType_STRING, Transform: transform.FromJSONTag().Transform(valueFromNullable), Description: "Description of the dashboard."},
+			{Name: "description", Type: proto.ColumnType_STRING, Transform: transform.FromField("Description").Transform(valueFromNullable), Description: "Description of the dashboard."},
 			{Name: "is_read_only", Type: proto.ColumnType_BOOL, Description: "Indicates if the dashboard is read-only. If True, only the author and admins can make changes to it."},
 			{Name: "layout_type", Type: proto.ColumnType_STRING, Description: "Creation date of the dashboard."},
 			{Name: "modified_at", Type: proto.ColumnType_TIMESTAMP, Description: "Modification time of the dashboard."},
