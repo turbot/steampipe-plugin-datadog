@@ -12,7 +12,7 @@ import (
 func tableDatadogMonitor(ctx context.Context) *plugin.Table {
 	return &plugin.Table{
 		Name:        "datadog_monitor",
-		Description: "Datadog monitor resource.",
+		Description: "A monitor provides alerts and notifications if a specific metric is above or below a certain threshold.",
 		List: &plugin.ListConfig{
 			Hydrate: listMonitors,
 			KeyColumns: plugin.KeyColumnSlice{
@@ -23,15 +23,15 @@ func tableDatadogMonitor(ctx context.Context) *plugin.Table {
 			// Top columns
 			{Name: "name", Type: proto.ColumnType_STRING, Description: "Name of the monitor."},
 			{Name: "id", Type: proto.ColumnType_STRING, Description: "ID of the monitor."},
-			{Name: "created_at", Type: proto.ColumnType_TIMESTAMP, Transform: transform.FromField("Created"), Description: "Timestamp of the monitor creation."},
 			{Name: "creator_email", Type: proto.ColumnType_STRING, Transform: transform.FromField("Creator.Email"), Description: "Email of the creator."},
-			{Name: "type", Type: proto.ColumnType_STRING, Description: "The type of the monitor. For more information about `type`, see the [monitor options](https://docs.datadoghq.com/monitors/guide/monitor_api_options/) docs."},
+			{Name: "created_at", Type: proto.ColumnType_TIMESTAMP, Transform: transform.FromField("Created"), Description: "Timestamp of the monitor creation."},
+			{Name: "type", Type: proto.ColumnType_STRING, Description: "The type of the monitor. For more information about type, see https://docs.datadoghq.com/monitors/guide/monitor_api_options/."},
 
 			// Other useful columns
 			{Name: "message", Type: proto.ColumnType_STRING, Description: "Timestamp of the monitor creation."},
 			{Name: "modified_at", Type: proto.ColumnType_TIMESTAMP, Transform: transform.FromField("Modified"), Description: "Last timestamp when the monitor was edited."},
 			{Name: "multi", Type: proto.ColumnType_BOOL, Description: "Whether or not the monitor is broken down on different groups."},
-			{Name: "overall_state", Type: proto.ColumnType_STRING, Description: "Current state of the monitor."},
+			{Name: "overall_state", Type: proto.ColumnType_STRING, Description: "Current state of the monitor. Possible states are \"Alert\", \"Ignored\", \"No Data\", \"OK\", \"Skipped\", \"Unknown\" and \"Warn\"."},
 			{Name: "priority", Type: proto.ColumnType_INT, Transform: transform.FromField("Priority").Transform(valueFromNullable), Description: "Integer from 1 (high) to 5 (low) indicating alert severity."},
 			{Name: "query", Type: proto.ColumnType_STRING, Description: "The monitor query."},
 

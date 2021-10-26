@@ -1,6 +1,6 @@
 # Table: datadog_integration_aws
 
-Datadog AWS integration resource. Integrations allows to bring together all of the metrics and logs from your infrastructure and gain insight into the unified system .
+Datadog AWS integration resource. Integrations allows to bring together all of the metrics and logs from your infrastructure and gain insight into the unified system.
 
 ## Examples
 
