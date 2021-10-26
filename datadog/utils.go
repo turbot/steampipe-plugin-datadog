@@ -100,7 +100,7 @@ func connectV1(ctx context.Context, d *plugin.QueryData) (context.Context, *data
 	return ctx, apiClient, nil
 }
 
-func connectV2(ctx context.Context, d *plugin.QueryData) (context.Context, *datadogV2.APIClient, error) {
+func connectV2(ctx context.Context, d *plugin.QueryData) (context.Context, *datadogV2.APIClient, *datadogV2.Configuration, error) {
 
 	// Load connection from cache, which preserves throttling protection etc
 	// Not sure if we should cache this --  as we are modifying the context in this function
@@ -129,11 +129,11 @@ func connectV2(ctx context.Context, d *plugin.QueryData) (context.Context, *data
 
 	// Error if the minimum config is not set
 	if apiKey == "" {
-		return nil, nil, errors.New("api_key must be configured")
+		return nil, nil, nil, errors.New("api_key must be configured")
 	}
 
 	if AppKey == "" {
-		return nil, nil, errors.New("app_key must be configured")
+		return nil, nil, nil, errors.New("app_key must be configured")
 	}
 
 	ctx = context.WithValue(ctx, datadogV2.ContextAPIKeys,
@@ -152,10 +152,10 @@ func connectV2(ctx context.Context, d *plugin.QueryData) (context.Context, *data
 	if apiURL != "" {
 		parsedAPIURL, parseErr := url.Parse(apiURL)
 		if parseErr != nil {
-			return nil, nil, fmt.Errorf(`invalid API URL : %v`, parseErr)
+			return nil, nil, nil, fmt.Errorf(`invalid API URL : %v`, parseErr)
 		}
 		if parsedAPIURL.Host == "" || parsedAPIURL.Scheme == "" {
-			return nil, nil, fmt.Errorf(`missing protocol or host : %v`, apiURL)
+			return nil, nil, nil, fmt.Errorf(`missing protocol or host : %v`, apiURL)
 		}
 
 		strings.Split(parsedAPIURL.Host, "/")
@@ -179,7 +179,7 @@ func connectV2(ctx context.Context, d *plugin.QueryData) (context.Context, *data
 	configuration.UserAgent = "Steampipe"
 	apiClient := datadogV2.NewAPIClient(configuration)
 
-	return ctx, apiClient, nil
+	return ctx, apiClient, configuration, nil
 }
 
 //// TRANSFORM FUNCTIONS

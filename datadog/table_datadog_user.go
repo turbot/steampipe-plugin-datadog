@@ -51,7 +51,7 @@ func tableDatadogUser(ctx context.Context) *plugin.Table {
 }
 
 func listUsers(ctx context.Context, d *plugin.QueryData, _ *plugin.HydrateData) (interface{}, error) {
-	ctx, apiClient, err := connectV2(ctx, d)
+	ctx, apiClient, _, err := connectV2(ctx, d)
 	if err != nil {
 		plugin.Logger(ctx).Error("datadog_user.listUsers", "connection_error", err)
 		return nil, err
@@ -117,7 +117,7 @@ func getUser(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateData) (i
 		return nil, nil
 	}
 
-	ctx, apiClient, err := connectV2(ctx, d)
+	ctx, apiClient, _, err := connectV2(ctx, d)
 	if err != nil {
 		plugin.Logger(ctx).Error("datadog_role.getUser", "connection_error", err)
 		return nil, err
