@@ -11,7 +11,7 @@ import (
 func tableDatadogLogsMetric(ctx context.Context) *plugin.Table {
 	return &plugin.Table{
 		Name:        "datadog_logs_metric",
-		Description: "Datadog resource for interacting with the logs_metric API.",
+		Description: "Log-based metrics are a cost-efficient way to summarize log data from the entire ingest stream.",
 		Get: &plugin.GetConfig{
 			Hydrate:    getLogsMetric,
 			KeyColumns: plugin.SingleColumn("id"),
