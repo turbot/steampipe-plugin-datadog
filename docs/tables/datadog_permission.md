@@ -1,4 +1,4 @@
-# Table: datadog_role
+# Table: datadog_permission
 
 Permissions provide the base level of access for roles.
 
