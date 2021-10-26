@@ -11,7 +11,7 @@ import (
 func tableDatadogPermission(ctx context.Context) *plugin.Table {
 	return &plugin.Table{
 		Name:        "datadog_permission",
-		Description: "Datadog permission resource.",
+		Description: "Permissions provide the base level of access for roles.",
 		List: &plugin.ListConfig{
 			Hydrate: listPermissions,
 		},
@@ -21,7 +21,7 @@ func tableDatadogPermission(ctx context.Context) *plugin.Table {
 			{Name: "id", Type: proto.ColumnType_STRING, Description: "Id of the permission."},
 			{Name: "restricted", Type: proto.ColumnType_BOOL, Transform: transform.FromField("Attributes.Restricted"), Description: "Whether or not the permission is restricted."},
 			{Name: "group_name", Type: proto.ColumnType_STRING, Transform: transform.FromField("Attributes.GroupName"), Description: "Name of the permission group."},
-			{Name: "created_at", Type: proto.ColumnType_TIMESTAMP, Transform: transform.FromField("Attributes.Created"), Description: "Creation time of the user."},
+			{Name: "created_at", Type: proto.ColumnType_TIMESTAMP, Transform: transform.FromField("Attributes.Created"), Description: "Creation time of the permission."},
 
 			// Other columns
 			{Name: "description", Type: proto.ColumnType_STRING, Transform: transform.FromField("Attributes.Description"), Description: "Description of the permission."},
