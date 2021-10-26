@@ -13,7 +13,7 @@ import (
 func tableDatadogUser(ctx context.Context) *plugin.Table {
 	return &plugin.Table{
 		Name:        "datadog_user",
-		Description: "Datadog dashboard resource.",
+		Description: "User resource in Datadog.",
 		Get: &plugin.GetConfig{
 			Hydrate:    getUser,
 			KeyColumns: plugin.SingleColumn("id"),

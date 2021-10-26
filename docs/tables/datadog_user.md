@@ -1,6 +1,6 @@
 # Table: datadog_user
 
-Users in the Datadog.
+User resource in Datadog.
 
 ## Examples
 
