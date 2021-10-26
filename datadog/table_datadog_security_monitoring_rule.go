@@ -2,6 +2,7 @@ package datadog
 
 import (
 	"context"
+	"strings"
 
 	datadog "github.com/DataDog/datadog-api-client-go/api/v2/datadog"
 	"github.com/turbot/steampipe-plugin-sdk/grpc/proto"
@@ -11,16 +12,13 @@ import (
 func tableDatadogSecurityMonitoringRule(ctx context.Context) *plugin.Table {
 	return &plugin.Table{
 		Name:        "datadog_security_monitoring_rule",
-		Description: "Datadog Security Monitoring Rule API resource.",
-		// Get: &plugin.GetConfig{
-		// 	Hydrate:    getRole,
-		// 	KeyColumns: plugin.SingleColumn("id"),
-		// },
+		Description: "Security monitoring rules define conditional logic that is applied to all ingested logs and cloud configurations.",
+		Get: &plugin.GetConfig{
+			Hydrate:    getSecurityMonitoringRule,
+			KeyColumns: plugin.SingleColumn("id"),
+		},
 		List: &plugin.ListConfig{
 			Hydrate: listSecurityMonitoringRules,
-			KeyColumns: plugin.KeyColumnSlice{
-				{Name: "name", Require: plugin.Optional},
-			},
 		},
 		Columns: []*plugin.Column{
 			// Top columns
@@ -40,14 +38,14 @@ func tableDatadogSecurityMonitoringRule(ctx context.Context) *plugin.Table {
 
 			{Name: "cases", Type: proto.ColumnType_JSON, Description: "Cases for generating signals."},
 			{Name: "filters", Type: proto.ColumnType_JSON, Description: "Additional queries to filter matched events before they are processed."},
-			{Name: "options", Type: proto.ColumnType_JSON, Description: ""},
+			{Name: "options", Type: proto.ColumnType_JSON, Description: "Additional options for security monitoring rules."},
 			{Name: "tags", Type: proto.ColumnType_JSON, Description: "Tags for generated signals."},
 		},
 	}
 }
 
 func listSecurityMonitoringRules(ctx context.Context, d *plugin.QueryData, _ *plugin.HydrateData) (interface{}, error) {
-	ctx, apiClient,_, err := connectV2(ctx, d)
+	ctx, apiClient, _, err := connectV2(ctx, d)
 	if err != nil {
 		plugin.Logger(ctx).Error("datadog_security_monitoring_rule.listSecurityMonitoringRules", "connection_error", err)
 		return nil, err
@@ -83,34 +81,34 @@ func listSecurityMonitoringRules(ctx context.Context, d *plugin.QueryData, _ *pl
 
 }
 
-// func getRole(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateData) (interface{}, error) {
-// 	var roleID string
+func getSecurityMonitoringRule(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateData) (interface{}, error) {
+	var ruleID string
 
-// 	if h.Item != nil {
-// 		roleID = *h.Item.(datadog.Role).Id
-// 	} else {
-// 		roleID = d.KeyColumnQualString("id")
-// 	}
+	if h.Item != nil {
+		ruleID = *h.Item.(datadog.SecurityMonitoringRuleResponse).Id
+	} else {
+		ruleID = d.KeyColumnQualString("id")
+	}
 
-// 	if strings.TrimSpace(roleID) == "" {
-// 		return nil, nil
-// 	}
+	if strings.TrimSpace(ruleID) == "" {
+		return nil, nil
+	}
 
-// 	ctx, apiClient, err := connectV2(ctx, d)
-// 	if err != nil {
-// 		plugin.Logger(ctx).Error("datadog_role.getRole", "connection_error", err)
-// 		return nil, err
-// 	}
+	ctx, apiClient, _, err := connectV2(ctx, d)
+	if err != nil {
+		plugin.Logger(ctx).Error("datadog_security_monitoring_rule.getRole", "connection_error", err)
+		return nil, err
+	}
 
-// 	// https://github.com/DataDog/datadog-api-client-go/blob/master/api/v2/datadog/docs/RolesApi.md#GetRole
-// 	resp, _, err := apiClient.RolesApi.GetRole(ctx, roleID)
-// 	if err != nil {
-// 		plugin.Logger(ctx).Error("datadog_role.getRole", "query_error", err)
-// 		if err.Error() == "404 Not Found" {
-// 			return nil, nil
-// 		}
-// 		return nil, err
-// 	}
+	// https://github.com/DataDog/datadog-api-client-go/blob/master/api/v2/datadog/docs/SecurityMonitoringApi.md#getsecuritymonitoringrule
+	resp, _, err := apiClient.SecurityMonitoringApi.GetSecurityMonitoringRule(ctx, ruleID)
+	if err != nil {
+		plugin.Logger(ctx).Error("datadog_security_monitoring_rule.getRole", "query_error", err)
+		if err.Error() == "404 Not Found" {
+			return nil, nil
+		}
+		return nil, err
+	}
 
-// 	return resp.GetData(), nil
-// }
+	return resp, nil
+}
