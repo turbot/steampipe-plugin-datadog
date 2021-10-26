@@ -13,7 +13,7 @@ import (
 func tableDatadogSecurityMonitoringSignal(ctx context.Context) *plugin.Table {
 	return &plugin.Table{
 		Name:        "datadog_security_monitoring_signal",
-		Description: "Datadog Security Monitoring Rule API resource.",
+		Description: "Signals are threats detected based on a security monitoring rule.",
 		List: &plugin.ListConfig{
 			Hydrate: listSecurityMonitoringSignals,
 			KeyColumns: plugin.KeyColumnSlice{
@@ -28,11 +28,11 @@ func tableDatadogSecurityMonitoringSignal(ctx context.Context) *plugin.Table {
 			{Name: "message", Type: proto.ColumnType_STRING, Transform: transform.FromField("Attributes.Message"), Description: "The message in the security signal defined by the rule that generated the signal."},
 			{Name: "timestamp", Type: proto.ColumnType_TIMESTAMP, Transform: transform.FromField("Attributes.Timestamp"), Description: "The timestamp of the security signal."},
 			{Name: "filter_query", Type: proto.ColumnType_STRING, Transform: transform.FromQual("filter_query"), Description: "The search query for security signals. For more information refer https://docs.datadoghq.com/security_platform/explorer/"},
+			{Name: "title", Type: proto.ColumnType_STRING, Transform: transform.FromField("Attributes.Attributes").Transform(signalTitle), Description: "Title of the security signal"},
 
 			// JSON columns
 			{Name: "attributes", Type: proto.ColumnType_JSON, Transform: transform.FromField("Attributes.Attributes"), Description: "A JSON object of attributes in the security signal."},
 			{Name: "tags", Type: proto.ColumnType_JSON, Transform: transform.FromField("Attributes.Tags"), Description: "An array of tags associated with the security signal."},
-			{Name: "title", Type: proto.ColumnType_STRING, Transform: transform.FromField("Attributes.Attributes").Transform(signalTitle), Description: "Title of the security signal"},
 		},
 	}
 }
