@@ -20,22 +20,22 @@ For example:
 
 ```sql
 select
-  email,
   name,
-  status,
-  disabled
+  type,
+  overall_state
 from
-  datadog_user;
+  datadog_monitor
+where
+  overall_state in ('Alert', 'Warn');
 ```
 
 ```
-+---------------------+-----------------------+---------+----------+
-| email               | name                  | status  | disabled |
-+---------------------+-----------------------+---------+----------+
-| subham@turbot.com   | <null>                | Pending | false    |
-| subhajit@turbot.com | Subhajit Kumar Mondal | Active  | true     |
-| lalit@turbot.com    | Lalit Bhardwaj        | Active  | true     |
-+---------------------+-----------------------+---------+----------+
++-------------------------------+---------------+---------------+
+| name                          | type          | overall_state |
++-------------------------------+---------------+---------------+
+| Spend Alert                   | query alert   | Alert         |
+| [Auto] Clock in sync with NTP | service check | Warn          |
++-------------------------------+---------------+---------------+
 ```
 
 ## Documentation

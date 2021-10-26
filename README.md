@@ -22,7 +22,7 @@ steampipe plugin install datadog
 Run a query:
 
 ```sql
-select email, id, name, status, disabled from datadog_user;
+select name, type, overall_state from datadog_monitor where overall_state in ('Alert', 'Warn');
 ```
 
 ## Developing
