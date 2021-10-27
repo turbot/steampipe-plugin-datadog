@@ -65,9 +65,9 @@ func listUsers(ctx context.Context, d *plugin.QueryData, _ *plugin.HydrateData) 
 		// Filter:     &filter, //TODO Need to explore this field
 	}
 
-	fiterStatus := d.KeyColumnQualString("status")
-	if fiterStatus != "" {
-		opts.WithFilterStatus(fiterStatus)
+	filterStatus := d.KeyColumnQualString("status")
+	if filterStatus != "" {
+		opts.WithFilterStatus(filterStatus)
 	}
 
 	paging := true

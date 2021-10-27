@@ -71,14 +71,14 @@ func listDashboards(ctx context.Context, d *plugin.QueryData, _ *plugin.HydrateD
 }
 
 func getDashboard(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateData) (interface{}, error) {
-	var dasboardID string
+	var dashboardID string
 	if h.Item != nil {
-		dasboardID = *h.Item.(datadog.DashboardSummaryDefinition).Id
+		dashboardID = *h.Item.(datadog.DashboardSummaryDefinition).Id
 	} else {
-		dasboardID = d.KeyColumnQuals["id"].GetStringValue()
+		dashboardID = d.KeyColumnQuals["id"].GetStringValue()
 	}
 
-	if strings.TrimSpace(dasboardID) == "" {
+	if strings.TrimSpace(dashboardID) == "" {
 		return nil, nil
 	}
 
@@ -88,7 +88,7 @@ func getDashboard(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateDat
 		return nil, err
 	}
 
-	resp, _, err := apiClient.DashboardsApi.GetDashboard(ctx, dasboardID)
+	resp, _, err := apiClient.DashboardsApi.GetDashboard(ctx, dashboardID)
 	if err != nil {
 		plugin.Logger(ctx).Error("datadog_dashboard.getDashboard", "query_error", err)
 		if err.Error() == "404 Not Found" {

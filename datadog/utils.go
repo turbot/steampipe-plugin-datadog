@@ -47,11 +47,11 @@ func connectV1(ctx context.Context, d *plugin.QueryData) (context.Context, *data
 
 	// Error if the minimum config is not set
 	if apiKey == "" {
-		return nil, nil, errors.New("api_key must be configured")
+		return ctx, nil, errors.New("api_key must be configured")
 	}
 
 	if appKey == "" {
-		return nil, nil, errors.New("app_key must be configured")
+		return ctx, nil, errors.New("app_key must be configured")
 	}
 
 	ctx = context.WithValue(ctx, datadogV1.ContextAPIKeys,
@@ -64,10 +64,10 @@ func connectV1(ctx context.Context, d *plugin.QueryData) (context.Context, *data
 	if apiURL != "" {
 		parsedAPIURL, parseErr := url.Parse(apiURL)
 		if parseErr != nil {
-			return nil, nil, fmt.Errorf(`invalid API URL : %v`, parseErr)
+			return ctx, nil, fmt.Errorf(`invalid API URL : %v`, parseErr)
 		}
 		if parsedAPIURL.Host == "" || parsedAPIURL.Scheme == "" {
-			return nil, nil, fmt.Errorf(`missing protocol or host : %v`, apiURL)
+			return ctx, nil, fmt.Errorf(`missing protocol or host : %v`, apiURL)
 		}
 
 		strings.Split(parsedAPIURL.Host, "/")
@@ -111,7 +111,7 @@ func connectV2(ctx context.Context, d *plugin.QueryData) (context.Context, *data
 
 	// Default to the env var settings
 	apiKey := os.Getenv("DD_CLIENT_API_KEY")
-	AppKey := os.Getenv("DD_CLIENT_APP_KEY")
+	appKey := os.Getenv("DD_CLIENT_APP_KEY")
 	apiURL := "https://api.datadoghq.com/"
 
 	// Prefer config settings
@@ -121,7 +121,7 @@ func connectV2(ctx context.Context, d *plugin.QueryData) (context.Context, *data
 		apiKey = *config.APIKey
 	}
 	if config.AppKey != nil {
-		AppKey = *config.AppKey
+		appKey = *config.AppKey
 	}
 	if config.ApiURL != nil {
 		apiURL = *config.ApiURL
@@ -129,17 +129,17 @@ func connectV2(ctx context.Context, d *plugin.QueryData) (context.Context, *data
 
 	// Error if the minimum config is not set
 	if apiKey == "" {
-		return nil, nil, nil, errors.New("api_key must be configured")
+		return ctx, nil, nil, errors.New("api_key must be configured")
 	}
 
-	if AppKey == "" {
-		return nil, nil, nil, errors.New("app_key must be configured")
+	if appKey == "" {
+		return ctx, nil, nil, errors.New("app_key must be configured")
 	}
 
 	ctx = context.WithValue(ctx, datadogV2.ContextAPIKeys,
 		map[string]datadogV2.APIKey{
 			"apiKeyAuth": {Key: apiKey},
-			"appKeyAuth": {Key: AppKey},
+			"appKeyAuth": {Key: appKey},
 		},
 	)
 
@@ -152,10 +152,10 @@ func connectV2(ctx context.Context, d *plugin.QueryData) (context.Context, *data
 	if apiURL != "" {
 		parsedAPIURL, parseErr := url.Parse(apiURL)
 		if parseErr != nil {
-			return nil, nil, nil, fmt.Errorf(`invalid API URL : %v`, parseErr)
+			return ctx, nil, nil, fmt.Errorf(`invalid API URL : %v`, parseErr)
 		}
 		if parsedAPIURL.Host == "" || parsedAPIURL.Scheme == "" {
-			return nil, nil, nil, fmt.Errorf(`missing protocol or host : %v`, apiURL)
+			return ctx, nil, nil, fmt.Errorf(`missing protocol or host : %v`, apiURL)
 		}
 
 		strings.Split(parsedAPIURL.Host, "/")
@@ -167,7 +167,7 @@ func connectV2(ctx context.Context, d *plugin.QueryData) (context.Context, *data
 			})
 	}
 
-	// Modify default client for rety handling
+	// Modify default client for retry handling
 	httpClientV2 := http.DefaultClient
 	ctOptions := transport.CustomTransportOptions{}
 	timeout := time.Duration(int64(60)) * time.Second
