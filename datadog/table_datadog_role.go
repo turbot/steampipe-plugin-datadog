@@ -32,7 +32,7 @@ func tableDatadogRole(ctx context.Context) *plugin.Table {
 			{Name: "created_at", Type: proto.ColumnType_TIMESTAMP, Transform: transform.FromField("Attributes.CreatedAt"), Description: "Creation time of the role."},
 			{Name: "modified_at", Type: proto.ColumnType_TIMESTAMP, Transform: transform.FromField("Attributes.ModifiedAt"), Description: "Time of last role modification."},
 
-			// JSON fields
+			// JSON column
 			{Name: "users", Type: proto.ColumnType_JSON, Hydrate: listRoleUsers, Transform: transform.From(userList), Description: "Set of objects containing the permission ID and the name of the permissions granted to this role."},
 			{Name: "permissions", Type: proto.ColumnType_JSON, Transform: transform.FromField("Relationships.Permissions.Data"), Description: "List of users emails attached to role."},
 		},

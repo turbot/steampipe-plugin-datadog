@@ -35,7 +35,7 @@ func tableDatadogMonitor(ctx context.Context) *plugin.Table {
 			{Name: "priority", Type: proto.ColumnType_INT, Transform: transform.FromField("Priority").Transform(valueFromNullable), Description: "Integer from 1 (high) to 5 (low) indicating alert severity."},
 			{Name: "query", Type: proto.ColumnType_STRING, Description: "The monitor query."},
 
-			// JSON fields
+			// JSON columns
 			{Name: "options", Type: proto.ColumnType_JSON, Description: "A list of role identifiers that can be pulled from the Roles API. Cannot be used with `locked` option."},
 			{Name: "restricted_roles", Type: proto.ColumnType_JSON, Description: "Relationships of the user object returned by the API."},
 			{Name: "group_states", Type: proto.ColumnType_JSON, Transform: transform.FromField("State.Groups"), Description: "Dictionary where the keys are groups (comma separated lists of tags) and the values are the list of groups your monitor is broken down on."},

@@ -41,7 +41,7 @@ func tableDatadogUser(ctx context.Context) *plugin.Table {
 			{Name: "status", Type: proto.ColumnType_STRING, Transform: transform.FromField("Attributes.Status"), Description: "Status of the user."},
 			{Name: "verified", Type: proto.ColumnType_BOOL, Transform: transform.FromField("Attributes.Verified"), Description: "Indicates the verification status of the user."},
 
-			// JSON fields
+			// JSON columns
 			{Name: "role_ids", Type: proto.ColumnType_JSON, Transform: transform.FromField("Relationships.Roles.Data").Transform(roleList), Description: "A list of role IDs attached to user."},
 			{Name: "relationships", Type: proto.ColumnType_JSON, Description: "Relationships of the user object returned by the API."},
 		},
