@@ -63,27 +63,27 @@ connection "datadog" {
   # Authentication - API Key
   # Get your API key from https://app.datadoghq.com/organization-settings/api-keys
   # Steampipe will resolve the API key in below order:
-  #  1. The "api_key" specified here in the config
-  #  2. The `DD_CLIENT_API_KEY` environment variable
+  #   1. The "api_key" specified here in the config
+  #   2. The `DD_CLIENT_API_KEY` environment variable
   # api_key = "1a2345bc6d78e9d98fa7bcd6e5ef56a7"
 
-  # Authentication - APP Key
-  # Get your APP key from https://app.datadoghq.com/organization-settings/application-keys
-  # Steampipe will resolve the APP key in below order:
-  #  1. The "app_key" specified here in the config
-  #  2. The `DD_CLIENT_APP_KEY` environment variable
+  # Authentication - Application Key
+  # Get your application key from https://app.datadoghq.com/organization-settings/application-keys
+  # Steampipe will resolve the application key in below order:
+  #   1. The "app_key" specified here in the config
+  #   2. The `DD_CLIENT_APP_KEY` environment variable
   # app_key = "b1cf234c0ed4c567890b524a3b42f1bd91c111a1"
 
   # The API URL. By default it is pointed to "https://api.datadoghq.com/"
-  # And if you're working with "EU" version of Datadog, use https://api.datadoghq.eu/
+  # If you're working with "EU" version of Datadog, use https://api.datadoghq.eu/
   # Note that this URL must not end with the /api/ path.
   # api_url = "https://api.datadoghq.com/"
 }
 ```
 
-- `api_key` (required) - [API](https://docs.datadoghq.com/account_management/api-app-keys/#api-keys) keys are unique to an organization. An API key is required by the Datadog Agent to submit metrics and events to Datadog. [Get API key](https://app.datadoghq.com/organization-settings/api-keys)
+- `api_key` (required) - [API keys](https://docs.datadoghq.com/account_management/api-app-keys/#api-keys) are unique to an organization. An API key is required by the Datadog Agent to submit metrics and events to Datadog. [Get an API key](https://app.datadoghq.com/organization-settings/api-keys).
 
-- `app_key` (required) - [Application](https://docs.datadoghq.com/account_management/api-app-keys/#application-keys) keys, in conjunction with organization’s API key, give users access to Datadog’s programmatic API. Application keys are associated with the user account that created them and have the permissions and capabilities of the user who created them. [Get APP key](https://app.datadoghq.com/organization-settings/application-keys)
+- `app_key` (required) - [Application keys](https://docs.datadoghq.com/account_management/api-app-keys/#application-keys) in conjunction with organization’s API key, give users access to Datadog’s programmatic API. Application keys are associated with the user account that created them and have the permissions and capabilities of the user who created them. [Get an application key](https://app.datadoghq.com/organization-settings/application-keys)
 
 ## Get Involved
 
