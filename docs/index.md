@@ -83,7 +83,7 @@ connection "datadog" {
 
 - `api_key` (required) - [API keys](https://docs.datadoghq.com/account_management/api-app-keys/#api-keys) are unique to an organization. An API key is required by the Datadog Agent to submit metrics and events to Datadog. [Get an API key](https://app.datadoghq.com/organization-settings/api-keys).
 
-- `app_key` (required) - [Application keys](https://docs.datadoghq.com/account_management/api-app-keys/#application-keys) in conjunction with organization’s API key, give users access to Datadog’s programmatic API. Application keys are associated with the user account that created them and have the permissions and capabilities of the user who created them. [Get an application key](https://app.datadoghq.com/organization-settings/application-keys)
+- `app_key` (required) - [Application keys](https://docs.datadoghq.com/account_management/api-app-keys/#application-keys) in conjunction with organization’s API key, give users access to Datadog’s programmatic API. Application keys are associated with the user account that created them and have the permissions and capabilities of the user who created them. [Get an application key](https://app.datadoghq.com/organization-settings/application-keys).
 
 ## Get Involved
 
