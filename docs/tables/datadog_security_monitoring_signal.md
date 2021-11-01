@@ -6,9 +6,7 @@ Signals are tied to entities such as the actor conducting the attack (e.g., user
 
 **Important notes:**
 
-By default this table will list all the signals generated in last 24 hours. But, it can be overriden by using `where` clause on the `timestamp` column
-
-- You can use `timestamp` and `filter_query` in a `where` clause to explore signals based on requirements.
+By default this table will list all the signals generated in last 24 hours. To filter results, we recommend specifying the `timestamp` and/or `filter_query` columns in a `where` clause to explore signals based on requirements.
 
 ## Examples
 
@@ -25,7 +23,7 @@ from
   datadog_security_monitoring_signal;
 ```
 
-### Signals created in the last 5 days
+### List signals created in the last 5 days
 
 ```sql
 select
@@ -40,7 +38,7 @@ where
   timestamp >= (current_date - interval '5' day);
 ```
 
-### List high status signals for last 1 day
+### List high status signals
 
 ```sql
 select
@@ -54,7 +52,7 @@ where
   filter_query = 'status:(critical OR high OR medium)';
 ```
 
-### List status signals for last one week for AWS S3
+### List AWS S3 signals created in the last 7 days
 
 ```sql
 select

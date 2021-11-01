@@ -38,8 +38,6 @@ where
 
 ### Filter monitoring rules by tags
 
-For instance filtering rules by tags `cloud:aws` and `source:s3`
-
 ```sql
 select
   id,

@@ -36,6 +36,7 @@ func tableDatadogSecurityMonitoringRule(ctx context.Context) *plugin.Table {
 			{Name: "update_author_id", Type: proto.ColumnType_STRING, Description: "User ID of the user who updated the rule."},
 			{Name: "version", Type: proto.ColumnType_INT, Description: "The version of the rule."},
 
+			// JSON columns
 			{Name: "cases", Type: proto.ColumnType_JSON, Description: "Cases for generating signals."},
 			{Name: "filters", Type: proto.ColumnType_JSON, Description: "Additional queries to filter matched events before they are processed."},
 			{Name: "options", Type: proto.ColumnType_JSON, Description: "Additional options for security monitoring rules."},

@@ -15,7 +15,7 @@ from
   datadog_role;
 ```
 
-### List users attached to Datadog admin role
+### List users assigned the Datadog Admin role
 
 ```sql
 select
@@ -28,7 +28,7 @@ where
   name = 'Datadog Admin Role';
 ```
 
-### List all the permissions in a specific role
+### List all the permissions for a specific role
 
 ```sql
 select

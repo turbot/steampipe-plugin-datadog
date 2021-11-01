@@ -47,8 +47,6 @@ select
 from
   datadog_monitor
 where
-  -- monitors in state Alert or Warn
   overall_state in ('Alert', 'Warn') and
-  -- monitors having tag aws
   tags @> '["aws"]'::jsonb;
 ```

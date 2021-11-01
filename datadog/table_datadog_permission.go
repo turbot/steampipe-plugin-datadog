@@ -23,7 +23,7 @@ func tableDatadogPermission(ctx context.Context) *plugin.Table {
 			{Name: "group_name", Type: proto.ColumnType_STRING, Transform: transform.FromField("Attributes.GroupName"), Description: "Name of the permission group."},
 			{Name: "created_at", Type: proto.ColumnType_TIMESTAMP, Transform: transform.FromField("Attributes.Created"), Description: "Creation time of the permission."},
 
-			// Other columns
+			// Other useful columns
 			{Name: "description", Type: proto.ColumnType_STRING, Transform: transform.FromField("Attributes.Description"), Description: "Description of the permission."},
 			{Name: "display_name", Type: proto.ColumnType_STRING, Transform: transform.FromField("Attributes.DisplayName"), Description: "Displayed name for the permission."},
 			{Name: "display_type", Type: proto.ColumnType_STRING, Transform: transform.FromField("Attributes.DisplayType"), Description: "Displayed type the permission."},

@@ -28,10 +28,12 @@ func tableDatadogDashboard(ctx context.Context) *plugin.Table {
 			{Name: "created_at", Type: proto.ColumnType_TIMESTAMP, Description: "Creation date of the dashboard."},
 			{Name: "layout_type", Type: proto.ColumnType_STRING, Description: "Layout type of the dashboard. Can be on of \"free\" or \"ordered\"."},
 
+			// Other columns
 			{Name: "description", Type: proto.ColumnType_STRING, Transform: transform.FromField("Description").Transform(valueFromNullable), Description: "Description of the dashboard."},
 			{Name: "is_read_only", Type: proto.ColumnType_BOOL, Description: "Indicates if the dashboard is read-only. If True, only the author and admins can make changes to it."},
 			{Name: "modified_at", Type: proto.ColumnType_TIMESTAMP, Description: "Modification time of the dashboard."},
-			{Name: "reflow_type", Type: proto.ColumnType_STRING, Hydrate: getDashboard, Description: "DashboardReflowType Reflow type for a **new dashboard layout** dashboard. If set to 'fixed', the dashboard expects all widgets to have a layout, and if it's set to 'auto', widgets should not have layouts."},
+			{Name: "reflow_type", Type: proto.ColumnType_STRING, Hydrate: getDashboard, Description: "Reflow type for a new dashboard layout dashboard. If set to 'fixed', the dashboard expects all widgets to have a layout, and if it's set to 'auto', widgets should not have layouts."},
+			{Name: "title", Type: proto.ColumnType_STRING, Description: "Title of the dashboard."},
 			{Name: "url", Type: proto.ColumnType_STRING, Description: "URL of the dashboard."},
 
 			// JSON columns
@@ -39,9 +41,6 @@ func tableDatadogDashboard(ctx context.Context) *plugin.Table {
 			{Name: "template_variable_presets", Type: proto.ColumnType_JSON, Hydrate: getDashboard, Description: "List of template variables saved views."},
 			{Name: "template_variables", Type: proto.ColumnType_JSON, Hydrate: getDashboard, Description: "List of template variables for this dashboard."},
 			{Name: "widgets", Type: proto.ColumnType_JSON, Hydrate: getDashboard, Description: "List of widgets to display on the dashboard."},
-
-			// common fields
-			{Name: "title", Type: proto.ColumnType_STRING, Description: "Title of the dashboard."},
 		},
 	}
 }

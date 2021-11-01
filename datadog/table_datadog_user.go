@@ -31,6 +31,7 @@ func tableDatadogUser(ctx context.Context) *plugin.Table {
 			{Name: "name", Type: proto.ColumnType_STRING, Transform: transform.FromField("Attributes.Name").Transform(valueFromNullable), Description: "Name of the user."},
 			{Name: "handle", Type: proto.ColumnType_STRING, Transform: transform.FromField("Attributes.Handle"), Description: "Handle of the user."},
 			{Name: "created_at", Type: proto.ColumnType_TIMESTAMP, Transform: transform.FromField("Attributes.CreatedAt"), Description: "Creation time of the user."},
+			{Name: "title", Type: proto.ColumnType_STRING, Transform: transform.FromField("Attributes.Title").Transform(valueFromNullable), Description: "Title of the user."},
 
 			// Other useful columns
 			{Name: "disabled", Type: proto.ColumnType_BOOL, Transform: transform.FromField("Attributes.Disabled"), Description: "Indicates if the user is disabled."},
@@ -41,11 +42,8 @@ func tableDatadogUser(ctx context.Context) *plugin.Table {
 			{Name: "verified", Type: proto.ColumnType_BOOL, Transform: transform.FromField("Attributes.Verified"), Description: "Indicates the verification status of the user."},
 
 			// JSON fields
-			{Name: "role_ids", Type: proto.ColumnType_JSON, Transform: transform.FromField("Relationships.Roles.Data").Transform(roleList), Description: "A list containing id of roles attached to user."},
+			{Name: "role_ids", Type: proto.ColumnType_JSON, Transform: transform.FromField("Relationships.Roles.Data").Transform(roleList), Description: "A list of role IDs attached to user."},
 			{Name: "relationships", Type: proto.ColumnType_JSON, Description: "Relationships of the user object returned by the API."},
-
-			// common fields
-			{Name: "title", Type: proto.ColumnType_STRING, Transform: transform.FromField("Attributes.Title").Transform(valueFromNullable), Description: "Title of the user."},
 		},
 	}
 }

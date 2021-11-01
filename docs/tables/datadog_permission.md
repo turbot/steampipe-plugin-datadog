@@ -33,7 +33,7 @@ where
   restricted;
 ```
 
-### List all the permissions in a specific role
+### List all the permissions for a specific role
 
 ```sql
 select
