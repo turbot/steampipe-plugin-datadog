@@ -22,12 +22,12 @@ func tableDatadogLogsMetric(ctx context.Context) *plugin.Table {
 		Columns: []*plugin.Column{
 			// Top columns
 			{Name: "id", Type: proto.ColumnType_STRING, Description: "The name of the log-based metric."},
-			{Name: "compute_aggregation_type", Type: proto.ColumnType_STRING, Transform: transform.FromField("Compute.AggregationType"), Description: "The type of aggregation to used for computing metric. Can be one of \"count\", \"distribution\"."},
-			{Name: "compute_path", Type: proto.ColumnType_STRING, Transform: transform.FromField("Compute.Path"), Description: "The path to the value the log-based metric will aggregate on (only used if the aggregation type is a \"distribution\")."},
-			{Name: "filter_query", Type: proto.ColumnType_STRING, Transform: transform.FromField("Filter.Query"), Description: "The search query - following the log search syntax."},
+			{Name: "compute_aggregation_type", Type: proto.ColumnType_STRING, Transform: transform.FromField("Attributes.Compute.AggregationType"), Description: "The type of aggregation to used for computing metric. Can be one of \"count\", \"distribution\"."},
+			{Name: "compute_path", Type: proto.ColumnType_STRING, Transform: transform.FromField("Attributes.Compute.Path"), Description: "The path to the value the log-based metric will aggregate on (only used if the aggregation type is a \"distribution\")."},
+			{Name: "filter_query", Type: proto.ColumnType_STRING, Transform: transform.FromField("Attributes.Filter.Query"), Description: "The search query - following the log search syntax to filter logs."},
 
 			// JSON columns
-			{Name: "group_by", Type: proto.ColumnType_JSON, Description: "List of rules for the group by."},
+			{Name: "group_by", Type: proto.ColumnType_JSON, Transform: transform.FromField("Attributes.GroupBy"), Description: "List of rules for the group by."},
 		},
 	}
 }

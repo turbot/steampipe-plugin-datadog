@@ -18,3 +18,27 @@ select
 from
   datadog_logs_metric;
 ```
+
+### Get count of metrics by compute_aggregation_type
+
+```sql
+select
+  count(*),
+  compute_aggregation_type
+from
+  datadog_logs_metric
+group by
+  compute_aggregation_type;
+```
+
+### Get details of filter_query and group_by clause for a specific log metric
+
+```sql
+select
+  filter_query,
+  jsonb_pretty(group_by) as group_by
+from
+  datadog_logs_metric
+where
+  id = 's3_bucket_by_region';
+```
