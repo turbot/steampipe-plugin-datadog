@@ -35,7 +35,7 @@ func tableDatadogIntegrationAws(ctx context.Context) *plugin.Table {
 			// JSON columns
 			{Name: "account_specific_namespace_rules", Type: proto.ColumnType_JSON, Description: "An object, that enables or disables metric collection for specific AWS namespaces for this AWS account only."},
 			{Name: "excluded_regions", Type: proto.ColumnType_JSON, Description: "An array of AWS regions to exclude from metrics collection."},
-			{Name: "filter_tags", Type: proto.ColumnType_JSON, Description: "The array of EC2 tags (in the form `key:value`) defines a filter that Datadog uses when collecting metrics from EC2. Wildcards, such as `?` (for single characters) and `*` (for multiple characters) can also be used. Only hosts that match one of the defined tags will be imported into Datadog. The rest will be ignored. Host matching a given tag can also be excluded by adding `!` before the tag. For example, `env:production,instance-type:c1.*,!region:us-east-1`"},
+			{Name: "filter_tags", Type: proto.ColumnType_JSON, Description: "List of tags (in the form 'key:value') that define a filter which is used when collecting EC2 or Lambda resources. These key:value pairs can be used to both whitelist and blacklist tags."},
 			{Name: "host_tags", Type: proto.ColumnType_JSON, Description: "Array of tags (in the form `key:value`) to add to all hosts and metrics reporting through this integration."},
 		},
 	}
