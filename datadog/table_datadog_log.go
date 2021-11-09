@@ -48,8 +48,6 @@ func listLogs(ctx context.Context, d *plugin.QueryData, _ *plugin.HydrateData) (
 	sort := datadog.LogsSort("timestamp")
 	opts := *datadog.NewListLogsGetOptionalParameters()
 	opts.WithSort(sort)
-	opts.WithFilterFrom(time.Now().Add(15 * time.Minute))
-	opts.WithFilterTo(time.Now())
 	opts.WithPageLimit(100)
 
 	limit := d.QueryContext.Limit
@@ -66,6 +64,7 @@ func listLogs(ctx context.Context, d *plugin.QueryData, _ *plugin.HydrateData) (
 
 	quals := d.Quals
 	if quals["timestamp"] != nil {
+		opts.WithFilterTo(time.Now())
 		for _, q := range quals["timestamp"].Quals {
 			timestamp := q.Value.GetTimestampValue().AsTime()
 			switch q.Operator {
@@ -81,7 +80,7 @@ func listLogs(ctx context.Context, d *plugin.QueryData, _ *plugin.HydrateData) (
 	}
 
 	for {
-		// https://github.com/DataDog/datadog-api-client-go/blob/master/api/v2/datadog/docs/LogsApi.md#listlogs
+		// https://github.com/DataDog/datadog-api-client-go/blob/master/api/v2/datadog/docs/LogsApi.md#listlogsget
 		resp, _, err := apiClient.LogsApi.ListLogsGet(ctx, opts)
 		if err != nil {
 			plugin.Logger(ctx).Error("datadog_log.listLogs", "query_error", err)
@@ -112,3 +111,5 @@ func listLogs(ctx context.Context, d *plugin.QueryData, _ *plugin.HydrateData) (
 // Example
 // https://docs.datadoghq.com/logs/explorer/search_syntax/
 // select * from datadog_log where query = '@detail.eventSource:s3.amazonaws.com' and timestamp >= (current_date - interval '2' day)
+
+// By default API too pulls events only for last 15 minutes
