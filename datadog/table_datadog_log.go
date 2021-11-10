@@ -13,7 +13,7 @@ import (
 func tableDatadogLog(ctx context.Context) *plugin.Table {
 	return &plugin.Table{
 		Name:        "datadog_log",
-		Description: "Log-based metrics are a cost-efficient way to summarize log data from the entire ingest stream.",
+		Description: "Datadog logs.",
 		List: &plugin.ListConfig{
 			Hydrate: listLogs,
 			KeyColumns: plugin.KeyColumnSlice{
@@ -24,16 +24,18 @@ func tableDatadogLog(ctx context.Context) *plugin.Table {
 		Columns: []*plugin.Column{
 			// Top columns
 			{Name: "id", Type: proto.ColumnType_STRING, Description: "Unique ID of the Log."},
-			{Name: "query", Type: proto.ColumnType_STRING, Transform: transform.FromQual("query"), Description: "Search query following logs syntax."},
-			{Name: "host", Type: proto.ColumnType_STRING, Transform: transform.FromField("Attributes.Host"), Description: "Name of the machine from where the logs are being sent."},
-			{Name: "message", Type: proto.ColumnType_STRING, Transform: transform.FromField("Attributes.Message"), Description: "The message https://docs.datadoghq.com/logs/log_collection/#reserved-attributes of your log. By default, Datadog ingests the value of the message attribute as the body of the log entry. That value is then highlighted and displayed in the Logstream, where it is indexed for full text search."},
-			{Name: "service", Type: proto.ColumnType_STRING, Transform: transform.FromField("Attributes.Service"), Description: "The name of the application or service generating the log events. It is used to switch from Logs to APM, so make sure you define the same value when you use both products."},
-			{Name: "status", Type: proto.ColumnType_STRING, Transform: transform.FromField("Attributes.Status"), Description: "Status of the message associated with your log."},
 			{Name: "timestamp", Type: proto.ColumnType_TIMESTAMP, Transform: transform.FromField("Attributes.Timestamp"), Description: "Timestamp of log."},
+			{Name: "query", Type: proto.ColumnType_STRING, Transform: transform.FromQual("query"), Description: "Query for searching logs. Refer https://docs.datadoghq.com/logs/explorer/search_syntax"},
+			{Name: "service", Type: proto.ColumnType_STRING, Transform: transform.FromField("Attributes.Service"), Description: "The name of the application or service generating the log events."},
+			{Name: "status", Type: proto.ColumnType_STRING, Transform: transform.FromField("Attributes.Status"), Description: "Status of the message associated with log."},
+
+			// Other useful columns
+			{Name: "host", Type: proto.ColumnType_STRING, Transform: transform.FromField("Attributes.Host"), Description: "Name of the machine from where the logs are being sent."},
+			{Name: "message", Type: proto.ColumnType_STRING, Transform: transform.FromField("Attributes.Message"), Description: "The message of the log."},
 
 			// JSON columns
-			{Name: "attributes", Type: proto.ColumnType_JSON, Transform: transform.FromField("Attributes.Attributes"), Description: "JSON object of attributes from your log."},
-			{Name: "tags", Type: proto.ColumnType_JSON, Transform: transform.FromField("Attributes.Tags"), Description: "Array of tags associated with your log."},
+			{Name: "attributes", Type: proto.ColumnType_JSON, Transform: transform.FromField("Attributes.Attributes"), Description: "JSON object of attributes for log."},
+			{Name: "tags", Type: proto.ColumnType_JSON, Transform: transform.FromField("Attributes.Tags"), Description: "Array of tags associated with log."},
 		},
 	}
 }
