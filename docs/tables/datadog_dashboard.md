@@ -19,7 +19,7 @@ from
   datadog_dashboard;
 ```
 
-### List dashboards with restricted access for editing with allowed users
+### List dashboards with restricted editing access
 
 ```sql
 select
@@ -34,7 +34,7 @@ where
   dr.id = role;
 ```
 
-### List read only dashboards (only dashboard author and admins can make changes to it)
+### List read-only dashboards (only dashboard author and admins can make changes to it)
 
 ```sql
 select
