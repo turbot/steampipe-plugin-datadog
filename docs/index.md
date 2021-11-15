@@ -60,8 +60,8 @@ Installing the latest datadog plugin will create a config file (`~/.steampipe/co
 connection "datadog" {
   plugin = "datadog"
 
-  # The API URL. By default it is pointed to https://api.datadoghq.com/
-  # If you're working with the EU version of Datadog, use https://api.datadoghq.eu/
+  # The API URL. By default it is pointed to "https://api.datadoghq.com/"
+  # If working with the EU version of Datadog, use "https://api.datadoghq.eu/"
   # Please note that this URL must not end with the /api/ path.
   # api_url = "https://api.datadoghq.com/"
 
