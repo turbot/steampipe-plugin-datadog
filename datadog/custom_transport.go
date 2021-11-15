@@ -1,6 +1,6 @@
-package transport
+package datadog
 
-// https://github.com/terraform-providers/terraform-provider-datadog/datadog/internal/transport
+// Credit to https://github.com/turbot/steampipe-plugin-datadog/blob/add-tables/internal/transport/custom_transport.go
 
 import (
 	"bytes"

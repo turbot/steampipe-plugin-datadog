@@ -13,7 +13,6 @@ import (
 	datadogV2 "github.com/DataDog/datadog-api-client-go/api/v2/datadog"
 
 	"github.com/pkg/errors"
-	"github.com/turbot/steampipe-plugin-datadog/internal/transport"
 	"github.com/turbot/steampipe-plugin-sdk/plugin"
 	"github.com/turbot/steampipe-plugin-sdk/plugin/transform"
 )
@@ -87,10 +86,10 @@ func connectV1(ctx context.Context, d *plugin.QueryData) (context.Context, *data
 
 	// Modify default client for retry handling
 	httpClientV1 := http.DefaultClient
-	ctOptions := transport.CustomTransportOptions{}
+	ctOptions := CustomTransportOptions{}
 	timeout := time.Duration(int64(60)) * time.Second
 	ctOptions.Timeout = &timeout
-	httpClientV1.Transport = transport.NewCustomTransport(httpClientV1.Transport, ctOptions)
+	httpClientV1.Transport = NewCustomTransport(httpClientV1.Transport, ctOptions)
 
 	configuration := datadogV1.NewConfiguration()
 	configuration.HTTPClient = httpClientV1
@@ -169,10 +168,10 @@ func connectV2(ctx context.Context, d *plugin.QueryData) (context.Context, *data
 
 	// Modify default client for retry handling
 	httpClientV2 := http.DefaultClient
-	ctOptions := transport.CustomTransportOptions{}
+	ctOptions := CustomTransportOptions{}
 	timeout := time.Duration(int64(60)) * time.Second
 	ctOptions.Timeout = &timeout
-	httpClientV2.Transport = transport.NewCustomTransport(httpClientV2.Transport, ctOptions)
+	httpClientV2.Transport = NewCustomTransport(httpClientV2.Transport, ctOptions)
 
 	configuration := datadogV2.NewConfiguration()
 	configuration.HTTPClient = httpClientV2

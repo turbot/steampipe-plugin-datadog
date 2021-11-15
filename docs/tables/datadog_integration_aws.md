@@ -19,7 +19,7 @@ from
   datadog_integration_aws;
 ```
 
-### List AWS integrations filtering by the "env:production" tag key-value pair
+### List AWS integrations with "env:production" filter tags
 
 ```sql
 select
