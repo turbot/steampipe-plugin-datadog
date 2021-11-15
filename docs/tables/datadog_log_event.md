@@ -1,4 +1,4 @@
-# Table: datadog_log
+# Table: datadog_log_event
 
 This table lists events from a Datadog logs collection.
 
@@ -20,7 +20,7 @@ select
   status,
   jsonb_pretty(attributes) as attributes
 from
-  datadog_log;
+  datadog_log_event;
 ```
 
 ## Timestamp Examples
@@ -35,7 +35,7 @@ select
   message,
   jsonb_pretty(attributes) as attributes
 from
-  datadog_log
+  datadog_log_event
 where
   timestamp >= (current_date - interval '2' day);
 ```
@@ -50,7 +50,7 @@ select
   message,
   jsonb_pretty(attributes) as attributes
 from
-  datadog_log
+  datadog_log_event
 where
   timestamp <= (current_date - interval '2' day)
   and timestamp >= (current_date - interval '5' day);
@@ -69,7 +69,7 @@ select
   attributes -> 'detail' ->> 'eventName' as event_name,
   attributes -> 'detail' -> 'requestParameters' ->> 'bucketName' as bucket_name
 from
-  datadog_log
+  datadog_log_event
 where
   query = '@detail.eventSource:s3.amazonaws.com'
   and timestamp >= (current_date - interval '2' day);
@@ -86,7 +86,7 @@ select
   attributes -> 'detail' ->> 'eventName' as event_name,
   attributes -> 'detail' -> 'requestParameters' ->> 'bucketName' as bucket_name
 from
-  datadog_log
+  datadog_log_event
 where
   query = '@detail.eventName:(CreateBucket OR DeleteBucket)'
   and timestamp >= (current_date - interval '7' day);

@@ -10,12 +10,12 @@ import (
 	"github.com/turbot/steampipe-plugin-sdk/plugin/transform"
 )
 
-func tableDatadogLog(ctx context.Context) *plugin.Table {
+func tableDatadogLogEvent(ctx context.Context) *plugin.Table {
 	return &plugin.Table{
-		Name:        "datadog_log",
-		Description: "Datadog logs.",
+		Name:        "datadog_log_event",
+		Description: "Datadog log events are records of notable changes in your environments.",
 		List: &plugin.ListConfig{
-			Hydrate: listLogs,
+			Hydrate: listLogEvent,
 			KeyColumns: plugin.KeyColumnSlice{
 				{Name: "query", Require: plugin.Optional},
 				{Name: "timestamp", Operators: []string{">", ">=", "=", "<", "<="}, Require: plugin.Optional},
@@ -40,10 +40,10 @@ func tableDatadogLog(ctx context.Context) *plugin.Table {
 	}
 }
 
-func listLogs(ctx context.Context, d *plugin.QueryData, _ *plugin.HydrateData) (interface{}, error) {
+func listLogEvent(ctx context.Context, d *plugin.QueryData, _ *plugin.HydrateData) (interface{}, error) {
 	ctx, apiClient, _, err := connectV2(ctx, d)
 	if err != nil {
-		plugin.Logger(ctx).Error("datadog_log.listLogs", "connection_error", err)
+		plugin.Logger(ctx).Error("datadog_log_event.listLogEvents", "connection_error", err)
 		return nil, err
 	}
 
@@ -65,7 +65,7 @@ func listLogs(ctx context.Context, d *plugin.QueryData, _ *plugin.HydrateData) (
 		opts.WithFilterQuery(query)
 	}
 
-        // By default the API only returns events for the last 15 minutes
+	// By default the API only returns logs for the last 15 minutes
 	quals := d.Quals
 	if quals["timestamp"] != nil {
 		opts.WithFilterTo(time.Now())
@@ -87,7 +87,7 @@ func listLogs(ctx context.Context, d *plugin.QueryData, _ *plugin.HydrateData) (
 		// https://github.com/DataDog/datadog-api-client-go/blob/master/api/v2/datadog/docs/LogsApi.md#listlogsget
 		resp, _, err := apiClient.LogsApi.ListLogsGet(ctx, opts)
 		if err != nil {
-			plugin.Logger(ctx).Error("datadog_log.listLogs", "query_error", err)
+			plugin.Logger(ctx).Error("datadog_log_event.listLogEvents", "query_error", err)
 		}
 
 		for _, log := range resp.GetData() {
@@ -111,5 +111,3 @@ func listLogs(ctx context.Context, d *plugin.QueryData, _ *plugin.HydrateData) (
 
 	return nil, nil
 }
-
-

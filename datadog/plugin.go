@@ -18,6 +18,7 @@ func Plugin(ctx context.Context) *plugin.Plugin {
 		TableMap: map[string]*plugin.Table{
 			"datadog_dashboard":                  tableDatadogDashboard(ctx),
 			"datadog_integration_aws":            tableDatadogIntegrationAws(ctx),
+			"datadog_log_event":                  tableDatadogLogEvent(ctx),
 			"datadog_logs_metric":                tableDatadogLogsMetric(ctx),
 			"datadog_monitor":                    tableDatadogMonitor(ctx),
 			"datadog_permission":                 tableDatadogPermission(ctx),
@@ -25,7 +26,6 @@ func Plugin(ctx context.Context) *plugin.Plugin {
 			"datadog_security_monitoring_rule":   tableDatadogSecurityMonitoringRule(ctx),
 			"datadog_security_monitoring_signal": tableDatadogSecurityMonitoringSignal(ctx),
 			"datadog_user":                       tableDatadogUser(ctx),
-			"datadog_log":                        tableDatadogLog(ctx),
 		},
 	}
 	return p
