@@ -59,11 +59,13 @@ func listLogs(ctx context.Context, d *plugin.QueryData, _ *plugin.HydrateData) (
 		}
 	}
 
+	// Search syntax - https://docs.datadoghq.com/logs/explorer/search_syntax/
 	query := d.KeyColumnQualString("query")
 	if query != "" {
 		opts.WithFilterQuery(query)
 	}
 
+        // By default the API only returns events for the last 15 minutes
 	quals := d.Quals
 	if quals["timestamp"] != nil {
 		opts.WithFilterTo(time.Now())
@@ -110,8 +112,4 @@ func listLogs(ctx context.Context, d *plugin.QueryData, _ *plugin.HydrateData) (
 	return nil, nil
 }
 
-// Example
-// https://docs.datadoghq.com/logs/explorer/search_syntax/
-// select * from datadog_log where query = '@detail.eventSource:s3.amazonaws.com' and timestamp >= (current_date - interval '2' day)
 
-// By default API too pulls events only for last 15 minutes
