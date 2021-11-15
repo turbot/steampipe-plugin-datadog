@@ -15,8 +15,8 @@ connection "datadog" {
   #   2. The `DD_CLIENT_APP_KEY` environment variable
   # app_key = "b1cf234c0ed4c567890b524a3b42f1bd91c111a1"
 
-  # The API URL. By default it is pointed to "https://api.datadoghq.com/"
-  # If you're working with "EU" version of Datadog, use https://api.datadoghq.eu/
-  # Note that this URL must not end with the /api/ path.
+  # The API URL. By default it is pointed to https://api.datadoghq.com/
+  # If you're working with the EU version of Datadog, use https://api.datadoghq.eu/
+  # Please note that this URL must not end with the /api/ path.
   # api_url = "https://api.datadoghq.com/"
 }
