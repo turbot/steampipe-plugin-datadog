@@ -19,7 +19,7 @@ from
   datadog_integration_aws;
 ```
 
-### List AWS integrations having tags to filter ec2 or lambda resources
+### List AWS integrations filtering by the "env:production" tag key-value pair
 
 ```sql
 select
@@ -32,7 +32,7 @@ where
   filter_tags @> '["env:production"]'::jsonb;
 ```
 
-### List namespaces enabled for metric collection for specific account
+### List namespaces with metric collection enabled for a specific AWS account
 
 ```sql
 select
@@ -44,5 +44,5 @@ from
     on true
 where
   item.enabled::boolean
-  and account_id = '013122550996';
+  and account_id = '123456789012';
 ```
