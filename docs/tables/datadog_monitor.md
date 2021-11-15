@@ -34,7 +34,7 @@ where
   overall_state in ('Alert', 'Warn');
 ```
 
-### Filter monitors based on state and tags
+### List monitors in "Alert" state with an "aws" tag
 
 ```sql
 select
@@ -47,6 +47,6 @@ select
 from
   datadog_monitor
 where
-  overall_state in ('Alert', 'Warn') and
+  overall_state in ('Alert') and
   tags @> '["aws"]'::jsonb;
 ```
