@@ -1,14 +1,16 @@
 # Table: datadog_user
 
-Users in the Datadog.
+A user belongs to an organization and can be assigned roles.
 
 ## Examples
 
-### List all users
+### Basic info
 
 ```sql
 select
-  *
+  email,
+  name,
+  role_ids
 from
   datadog_user;
 ```
@@ -41,7 +43,7 @@ where
   service_account;
 ```
 
-### Users created in the last 7 days
+### List users created in the last 7 days
 
 ```sql
 select

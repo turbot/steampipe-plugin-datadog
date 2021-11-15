@@ -2,6 +2,7 @@ package datadog
 
 import (
 	"context"
+	"strings"
 
 	datadog "github.com/DataDog/datadog-api-client-go/api/v2/datadog"
 	"github.com/turbot/steampipe-plugin-sdk/grpc/proto"
@@ -12,7 +13,11 @@ import (
 func tableDatadogUser(ctx context.Context) *plugin.Table {
 	return &plugin.Table{
 		Name:        "datadog_user",
-		Description: "Users in Datadog.",
+		Description: "A user belongs to an organization and can be assigned roles.",
+		Get: &plugin.GetConfig{
+			Hydrate:    getUser,
+			KeyColumns: plugin.SingleColumn("id"),
+		},
 		List: &plugin.ListConfig{
 			Hydrate: listUsers,
 			KeyColumns: plugin.KeyColumnSlice{
@@ -23,9 +28,10 @@ func tableDatadogUser(ctx context.Context) *plugin.Table {
 			// Top columns
 			{Name: "email", Type: proto.ColumnType_STRING, Transform: transform.FromField("Attributes.Email"), Description: "Email of the user."},
 			{Name: "id", Type: proto.ColumnType_STRING, Description: "Id of the user."},
-			{Name: "name", Type: proto.ColumnType_STRING, Transform: transform.FromField("Attributes.Name").Transform(ValueFromNullableStrint), Description: "Name of the user."},
+			{Name: "name", Type: proto.ColumnType_STRING, Transform: transform.FromField("Attributes.Name").Transform(valueFromNullable), Description: "Name of the user."},
 			{Name: "handle", Type: proto.ColumnType_STRING, Transform: transform.FromField("Attributes.Handle"), Description: "Handle of the user."},
 			{Name: "created_at", Type: proto.ColumnType_TIMESTAMP, Transform: transform.FromField("Attributes.CreatedAt"), Description: "Creation time of the user."},
+			{Name: "title", Type: proto.ColumnType_STRING, Transform: transform.FromField("Attributes.Title").Transform(valueFromNullable), Description: "Title of the user."},
 
 			// Other useful columns
 			{Name: "disabled", Type: proto.ColumnType_BOOL, Transform: transform.FromField("Attributes.Disabled"), Description: "Indicates if the user is disabled."},
@@ -33,37 +39,33 @@ func tableDatadogUser(ctx context.Context) *plugin.Table {
 			{Name: "modified_at", Type: proto.ColumnType_TIMESTAMP, Transform: transform.FromField("Attributes.ModifiedAt"), Description: "Time that the user was last modified."},
 			{Name: "service_account", Type: proto.ColumnType_BOOL, Transform: transform.FromField("Attributes.ServiceAccount"), Description: "Indicates if the user is a service account."},
 			{Name: "status", Type: proto.ColumnType_STRING, Transform: transform.FromField("Attributes.Status"), Description: "Status of the user."},
-			{Name: "title", Type: proto.ColumnType_STRING, Transform: transform.FromField("Attributes.Title").Transform(ValueFromNullableStrint), Description: "Title of the user."},
 			{Name: "verified", Type: proto.ColumnType_BOOL, Transform: transform.FromField("Attributes.Verified"), Description: "Indicates the verification status of the user."},
 
-			// JSON fields
-			{Name: "roles", Type: proto.ColumnType_JSON, Transform: transform.FromField("Relationships.Roles"), Description: "A list containing type and ID of a role attached to user."},
+			// JSON columns
+			{Name: "role_ids", Type: proto.ColumnType_JSON, Transform: transform.FromField("Relationships.Roles.Data").Transform(roleList), Description: "A list of role IDs attached to user."},
 			{Name: "relationships", Type: proto.ColumnType_JSON, Description: "Relationships of the user object returned by the API."},
 		},
 	}
 }
 
 func listUsers(ctx context.Context, d *plugin.QueryData, _ *plugin.HydrateData) (interface{}, error) {
-	ctx, err := connect(ctx, d)
+	ctx, apiClient, _, err := connectV2(ctx, d)
 	if err != nil {
 		plugin.Logger(ctx).Error("datadog_user.listUsers", "connection_error", err)
 		return nil, err
 	}
-
-	configuration := datadog.NewConfiguration()
-	apiClient := datadog.NewAPIClient(configuration)
 
 	// https://github.com/DataDog/datadog-api-client-go/blob/master/api/v2/datadog/docs/UsersApi.md#listusers
 	opts := datadog.ListUsersOptionalParameters{
 		PageSize:   datadog.PtrInt64(int64(100)),
 		PageNumber: datadog.PtrInt64(int64(0)),
 		Sort:       datadog.PtrString("name"),
-		// Filter:     &filter, // Need to explore this field
+		// Filter:     &filter, //TODO Need to explore this field
 	}
 
-	fiterStatus := d.KeyColumnQualString("status")
-	if fiterStatus != "" {
-		opts.FilterStatus = datadog.PtrString(fiterStatus)
+	filterStatus := d.KeyColumnQualString("status")
+	if filterStatus != "" {
+		opts.WithFilterStatus(filterStatus)
 	}
 
 	paging := true
@@ -79,17 +81,69 @@ func listUsers(ctx context.Context, d *plugin.QueryData, _ *plugin.HydrateData) 
 			count++
 			d.StreamListItem(ctx, user)
 			// Check if context has been cancelled or if the limit has been hit (if specified)
-			// if there is a limit, it will return the number of rows required to reach this limit
 			if d.QueryStatus.RowsRemaining(ctx) == 0 {
 				return nil, nil
 			}
 		}
 
-		if count >= resp.Meta.Page.GetTotalCount() {
-			paging = false
+		// Break loop if using filter
+		if resp.Meta.Page.HasTotalFilteredCount() {
+			if count >= resp.Meta.Page.GetTotalFilteredCount() {
+				return nil, nil
+			}
 		}
-		opts.PageNumber = datadog.PtrInt64(*opts.PageNumber + 1)
+		// Break loop if not using filter
+		if count >= resp.Meta.Page.GetTotalCount() {
+			return nil, nil
+		}
+		opts.WithPageNumber(*opts.PageNumber + 1)
 	}
 
 	return nil, nil
+}
+
+func getUser(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateData) (interface{}, error) {
+	var userID string
+
+	if h.Item != nil {
+		userID = *h.Item.(datadog.User).Id
+	} else {
+		userID = d.KeyColumnQualString("id")
+	}
+
+	if strings.TrimSpace(userID) == "" {
+		return nil, nil
+	}
+
+	ctx, apiClient, _, err := connectV2(ctx, d)
+	if err != nil {
+		plugin.Logger(ctx).Error("datadog_role.getUser", "connection_error", err)
+		return nil, err
+	}
+
+	// https: //github.com/DataDog/datadog-api-client-go/blob/master/api/v2/datadog/docs/UsersApi.md#GetUser
+	resp, _, err := apiClient.UsersApi.GetUser(ctx, userID)
+	if err != nil {
+		plugin.Logger(ctx).Error("datadog_role.getUser", "query_error", err)
+		if err.Error() == "404 Not Found" {
+			return nil, nil
+		}
+		return nil, err
+	}
+
+	return resp.GetData(), nil
+}
+
+//// TRANSFORM FUNCTION
+
+func roleList(ctx context.Context, d *transform.TransformData) (interface{}, error) {
+	roles := d.Value.(*[]datadog.RelationshipToRoleData)
+
+	var roleIds []string
+
+	for _, role := range *roles {
+		roleIds = append(roleIds, *role.Id)
+	}
+
+	return roleIds, nil
 }
