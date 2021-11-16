@@ -2,11 +2,8 @@ package datadog
 
 import (
 	"context"
-	"fmt"
 	"net/http"
-	"net/url"
 	"os"
-	"strings"
 	"time"
 
 	datadogV1 "github.com/DataDog/datadog-api-client-go/api/v1/datadog"
@@ -29,7 +26,7 @@ func connectV1(ctx context.Context, d *plugin.QueryData) (context.Context, *data
 	// Default to the env var settings
 	apiKey := os.Getenv("DD_CLIENT_API_KEY")
 	appKey := os.Getenv("DD_CLIENT_APP_KEY")
-	apiURL := "https://api.datadoghq.com/"
+	server := "datadoghq.com"
 
 	// Prefer config settings
 	config := GetConfig(d.Connection)
@@ -40,8 +37,8 @@ func connectV1(ctx context.Context, d *plugin.QueryData) (context.Context, *data
 	if config.AppKey != nil {
 		appKey = *config.AppKey
 	}
-	if config.ApiURL != nil {
-		apiURL = *config.ApiURL
+	if config.Server != nil {
+		server = *config.Server
 	}
 
 	// Error if the minimum config is not set
@@ -60,21 +57,11 @@ func connectV1(ctx context.Context, d *plugin.QueryData) (context.Context, *data
 		},
 	)
 
-	if apiURL != "" {
-		parsedAPIURL, parseErr := url.Parse(apiURL)
-		if parseErr != nil {
-			return ctx, nil, fmt.Errorf(`invalid API URL : %v`, parseErr)
-		}
-		if parsedAPIURL.Host == "" || parsedAPIURL.Scheme == "" {
-			return ctx, nil, fmt.Errorf(`missing protocol or host : %v`, apiURL)
-		}
-
-		strings.Split(parsedAPIURL.Host, "/")
+	if server != "" {
 		ctx = context.WithValue(ctx,
 			datadogV1.ContextServerVariables,
 			map[string]string{
-				"name":     parsedAPIURL.Host,
-				"protocol": parsedAPIURL.Scheme,
+				"site": server,
 			})
 	}
 
@@ -111,7 +98,7 @@ func connectV2(ctx context.Context, d *plugin.QueryData) (context.Context, *data
 	// Default to the env var settings
 	apiKey := os.Getenv("DD_CLIENT_API_KEY")
 	appKey := os.Getenv("DD_CLIENT_APP_KEY")
-	apiURL := "https://api.datadoghq.com/"
+	server := "datadoghq.com"
 
 	// Prefer config settings
 	config := GetConfig(d.Connection)
@@ -122,8 +109,8 @@ func connectV2(ctx context.Context, d *plugin.QueryData) (context.Context, *data
 	if config.AppKey != nil {
 		appKey = *config.AppKey
 	}
-	if config.ApiURL != nil {
-		apiURL = *config.ApiURL
+	if config.Server != nil {
+		server = *config.Server
 	}
 
 	// Error if the minimum config is not set
@@ -148,21 +135,11 @@ func connectV2(ctx context.Context, d *plugin.QueryData) (context.Context, *data
 		map[string]string{"basePath": "v2"},
 	)
 
-	if apiURL != "" {
-		parsedAPIURL, parseErr := url.Parse(apiURL)
-		if parseErr != nil {
-			return ctx, nil, nil, fmt.Errorf(`invalid API URL : %v`, parseErr)
-		}
-		if parsedAPIURL.Host == "" || parsedAPIURL.Scheme == "" {
-			return ctx, nil, nil, fmt.Errorf(`missing protocol or host : %v`, apiURL)
-		}
-
-		strings.Split(parsedAPIURL.Host, "/")
+	if server != "" {
 		ctx = context.WithValue(ctx,
 			datadogV2.ContextServerVariables,
 			map[string]string{
-				"name":     parsedAPIURL.Host,
-				"protocol": parsedAPIURL.Scheme,
+				"site": server,
 			})
 	}
 
