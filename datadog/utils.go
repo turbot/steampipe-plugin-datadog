@@ -64,7 +64,7 @@ func connectV1(ctx context.Context, d *plugin.QueryData) (context.Context, *data
 
 		strings.Split(parsedAPIURL.Host, "/")
 		// If api url is passed, set and use the api name and protocol on ServerIndex{1}
-		ctx = context.WithValue(ctx, datadogV2.ContextServerIndex, 1)
+		ctx = context.WithValue(ctx, datadogV1.ContextServerIndex, 1)
 		ctx = context.WithValue(ctx,
 			datadogV1.ContextServerVariables,
 			map[string]string{
