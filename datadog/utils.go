@@ -73,12 +73,6 @@ func connectV1(ctx context.Context, d *plugin.QueryData) (context.Context, *data
 			})
 	}
 
-	ctx = context.WithValue(
-		ctx,
-		datadogV1.ContextServerVariables,
-		map[string]string{"basePath": "v2"},
-	)
-
 	// Modify default client for retry handling
 	httpClientV1 := http.DefaultClient
 	ctOptions := CustomTransportOptions{}
