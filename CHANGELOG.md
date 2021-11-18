@@ -1,3 +1,10 @@
+## v0.0.2 [2021-11-18]
+
+_Bug fixes_
+
+- Fixed: When setting the `api_url` config argument to "https://api.datadoghq.eu/", connections should now work properly ([#8](https://github.com/turbot/steampipe-plugin-datadog/pull/8))
+- Fixed: All tables' list calls now handle API errors more effectively ([#8](https://github.com/turbot/steampipe-plugin-datadog/pull/8))
+
 ## v0.0.1 [2021-11-14]
 
 _What's new?_
