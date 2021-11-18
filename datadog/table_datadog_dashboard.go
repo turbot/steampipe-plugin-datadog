@@ -56,6 +56,7 @@ func listDashboards(ctx context.Context, d *plugin.QueryData, _ *plugin.HydrateD
 	resp, _, err := apiClient.DashboardsApi.ListDashboards(ctx, datadog.ListDashboardsOptionalParameters{})
 	if err != nil {
 		plugin.Logger(ctx).Error("datadog_dashboard.listDashboards", "query_error", err)
+		return nil, err
 	}
 
 	for _, dashboard := range resp.GetDashboards() {

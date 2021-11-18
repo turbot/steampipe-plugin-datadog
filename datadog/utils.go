@@ -19,13 +19,6 @@ import (
 
 func connectV1(ctx context.Context, d *plugin.QueryData) (context.Context, *datadogV1.APIClient, error) {
 
-	// Load connection from cache, which preserves throttling protection etc
-	// Not sure if we should cache this --  as we are modifying the context in this function
-	// cacheKey := "datadog_connect"
-	// if cachedData, ok := d.ConnectionManager.Cache.Get(cacheKey); ok {
-	// 	return cachedData.(context.Context), nil
-	// }
-
 	// Default to the env var settings
 	apiKey := os.Getenv("DD_CLIENT_API_KEY")
 	appKey := os.Getenv("DD_CLIENT_APP_KEY")
@@ -70,6 +63,8 @@ func connectV1(ctx context.Context, d *plugin.QueryData) (context.Context, *data
 		}
 
 		strings.Split(parsedAPIURL.Host, "/")
+		// If api url is passed, set and use the api name and protocol on ServerIndex{1}
+		ctx = context.WithValue(ctx, datadogV1.ContextServerIndex, 1)
 		ctx = context.WithValue(ctx,
 			datadogV1.ContextServerVariables,
 			map[string]string{
@@ -77,12 +72,6 @@ func connectV1(ctx context.Context, d *plugin.QueryData) (context.Context, *data
 				"protocol": parsedAPIURL.Scheme,
 			})
 	}
-
-	ctx = context.WithValue(
-		ctx,
-		datadogV1.ContextServerVariables,
-		map[string]string{"basePath": "v2"},
-	)
 
 	// Modify default client for retry handling
 	httpClientV1 := http.DefaultClient
@@ -100,13 +89,6 @@ func connectV1(ctx context.Context, d *plugin.QueryData) (context.Context, *data
 }
 
 func connectV2(ctx context.Context, d *plugin.QueryData) (context.Context, *datadogV2.APIClient, *datadogV2.Configuration, error) {
-
-	// Load connection from cache, which preserves throttling protection etc
-	// Not sure if we should cache this --  as we are modifying the context in this function
-	// cacheKey := "datadog_connect"
-	// if cachedData, ok := d.ConnectionManager.Cache.Get(cacheKey); ok {
-	// 	return cachedData.(context.Context), nil
-	// }
 
 	// Default to the env var settings
 	apiKey := os.Getenv("DD_CLIENT_API_KEY")
@@ -158,6 +140,8 @@ func connectV2(ctx context.Context, d *plugin.QueryData) (context.Context, *data
 		}
 
 		strings.Split(parsedAPIURL.Host, "/")
+		// If api url is passed, set and use the api name and protocol on ServerIndex{1}
+		ctx = context.WithValue(ctx, datadogV2.ContextServerIndex, 1)
 		ctx = context.WithValue(ctx,
 			datadogV2.ContextServerVariables,
 			map[string]string{

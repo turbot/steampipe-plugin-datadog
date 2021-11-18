@@ -62,6 +62,7 @@ func listRoles(ctx context.Context, d *plugin.QueryData, _ *plugin.HydrateData) 
 		resp, _, err := apiClient.RolesApi.ListRoles(ctx, opts)
 		if err != nil {
 			plugin.Logger(ctx).Error("datadog_role.listRoles", "query_error", err)
+			return nil, err
 		}
 
 		for _, role := range resp.GetData() {

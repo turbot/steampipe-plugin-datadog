@@ -64,6 +64,7 @@ func listAWSIntegrations(ctx context.Context, d *plugin.QueryData, _ *plugin.Hyd
 	resp, _, err := apiClient.AWSIntegrationApi.ListAWSAccounts(ctx, opts)
 	if err != nil {
 		plugin.Logger(ctx).Error("datadog_integration_aws.listAWSIntegrations", "query_error", err)
+		return nil, err
 	}
 
 	for _, account := range resp.GetAccounts() {

@@ -63,6 +63,7 @@ func listMonitors(ctx context.Context, d *plugin.QueryData, _ *plugin.HydrateDat
 	resp, _, err := apiClient.MonitorsApi.ListMonitors(ctx, opts)
 	if err != nil {
 		plugin.Logger(ctx).Error("datadog_monitor.listMonitors", "query_error", err)
+		return nil, err
 	}
 
 	for _, monitor := range resp {

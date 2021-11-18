@@ -42,6 +42,7 @@ func listPermissions(ctx context.Context, d *plugin.QueryData, _ *plugin.Hydrate
 	resp, _, err := apiClient.RolesApi.ListPermissions(ctx)
 	if err != nil {
 		plugin.Logger(ctx).Error("datadog_permission.listPermissions", "query_error", err)
+		return nil, err
 	}
 
 	for _, permission := range resp.GetData() {

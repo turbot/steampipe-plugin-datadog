@@ -88,6 +88,7 @@ func listLogEvent(ctx context.Context, d *plugin.QueryData, _ *plugin.HydrateDat
 		resp, _, err := apiClient.LogsApi.ListLogsGet(ctx, opts)
 		if err != nil {
 			plugin.Logger(ctx).Error("datadog_log_event.listLogEvents", "query_error", err)
+			return nil, err
 		}
 
 		for _, log := range resp.GetData() {

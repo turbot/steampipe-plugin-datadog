@@ -96,6 +96,7 @@ func listSecurityMonitoringSignals(ctx context.Context, d *plugin.QueryData, _ *
 		resp, _, err := apiClient.SecurityMonitoringApi.ListSecurityMonitoringSignals(ctx, opts)
 		if err != nil {
 			plugin.Logger(ctx).Error("datadog_security_monitoring_signal.listSecurityMonitoringSignals", "query_error", err)
+			return nil, err
 		}
 
 		for _, securityMonitoringSignal := range resp.GetData() {
