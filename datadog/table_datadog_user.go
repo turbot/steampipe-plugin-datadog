@@ -75,6 +75,7 @@ func listUsers(ctx context.Context, d *plugin.QueryData, _ *plugin.HydrateData) 
 		resp, _, err := apiClient.UsersApi.ListUsers(ctx, opts)
 		if err != nil {
 			plugin.Logger(ctx).Error("datadog_user.listUsers", "query_error", err)
+			return nil, err
 		}
 
 		for _, user := range resp.GetData() {

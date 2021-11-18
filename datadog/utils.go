@@ -19,13 +19,6 @@ import (
 
 func connectV1(ctx context.Context, d *plugin.QueryData) (context.Context, *datadogV1.APIClient, error) {
 
-	// Load connection from cache, which preserves throttling protection etc
-	// Not sure if we should cache this --  as we are modifying the context in this function
-	// cacheKey := "datadog_connect"
-	// if cachedData, ok := d.ConnectionManager.Cache.Get(cacheKey); ok {
-	// 	return cachedData.(context.Context), nil
-	// }
-
 	// Default to the env var settings
 	apiKey := os.Getenv("DD_CLIENT_API_KEY")
 	appKey := os.Getenv("DD_CLIENT_APP_KEY")
@@ -102,13 +95,6 @@ func connectV1(ctx context.Context, d *plugin.QueryData) (context.Context, *data
 }
 
 func connectV2(ctx context.Context, d *plugin.QueryData) (context.Context, *datadogV2.APIClient, *datadogV2.Configuration, error) {
-
-	// Load connection from cache, which preserves throttling protection etc
-	// Not sure if we should cache this --  as we are modifying the context in this function
-	// cacheKey := "datadog_connect"
-	// if cachedData, ok := d.ConnectionManager.Cache.Get(cacheKey); ok {
-	// 	return cachedData.(context.Context), nil
-	// }
 
 	// Default to the env var settings
 	apiKey := os.Getenv("DD_CLIENT_API_KEY")

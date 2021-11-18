@@ -43,6 +43,7 @@ func listLogsMetrics(ctx context.Context, d *plugin.QueryData, _ *plugin.Hydrate
 	resp, _, err := apiClient.LogsMetricsApi.ListLogsMetrics(ctx)
 	if err != nil {
 		plugin.Logger(ctx).Error("datadog_logs_metric.listLogsMetrics", "query_error", err)
+		return nil, err
 	}
 
 	for _, logMetric := range resp.GetData() {

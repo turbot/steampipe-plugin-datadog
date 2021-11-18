@@ -63,6 +63,7 @@ func listSecurityMonitoringRules(ctx context.Context, d *plugin.QueryData, _ *pl
 		resp, _, err := apiClient.SecurityMonitoringApi.ListSecurityMonitoringRules(ctx, opts)
 		if err != nil {
 			plugin.Logger(ctx).Error("datadog_security_monitoring_rule.listSecurityMonitoringRules", "query_error", err)
+			return nil, err
 		}
 
 		for _, securityMonitoringRule := range resp.GetData() {
