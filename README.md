@@ -1,5 +1,3 @@
-# steampipe-plugin-datadog
-
 ![image](https://hub.steampipe.io/images/plugins/turbot/datadog-social-graphic.png)
 
 # Datadog Plugin for Steampipe
