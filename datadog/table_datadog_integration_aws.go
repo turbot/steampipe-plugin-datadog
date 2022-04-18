@@ -4,8 +4,8 @@ import (
 	"context"
 
 	datadog "github.com/DataDog/datadog-api-client-go/api/v1/datadog"
-	"github.com/turbot/steampipe-plugin-sdk/grpc/proto"
-	"github.com/turbot/steampipe-plugin-sdk/plugin"
+	"github.com/turbot/steampipe-plugin-sdk/v3/grpc/proto"
+	"github.com/turbot/steampipe-plugin-sdk/v3/plugin"
 )
 
 func tableDatadogIntegrationAws(ctx context.Context) *plugin.Table {
