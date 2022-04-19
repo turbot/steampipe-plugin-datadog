@@ -5,8 +5,8 @@ import (
 	"strings"
 
 	datadog "github.com/DataDog/datadog-api-client-go/api/v2/datadog"
-	"github.com/turbot/steampipe-plugin-sdk/grpc/proto"
-	"github.com/turbot/steampipe-plugin-sdk/plugin"
+	"github.com/turbot/steampipe-plugin-sdk/v3/grpc/proto"
+	"github.com/turbot/steampipe-plugin-sdk/v3/plugin"
 )
 
 func tableDatadogSecurityMonitoringRule(ctx context.Context) *plugin.Table {
