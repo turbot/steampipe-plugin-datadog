@@ -4,6 +4,7 @@ _Enhancements_
 
 - Recompiled plugin with [steampipe-plugin-sdk-v3.1.0](https://github.com/turbot/steampipe-plugin-sdk/blob/main/CHANGELOG.md#v310--2022-03-30) ([#13](https://github.com/turbot/steampipe-plugin-datadog/pull/13))
 - Recompiled plugin with Go version 1.18 ([#13](https://github.com/turbot/steampipe-plugin-datadog/pull/13))
+- Added support for native Linux ARM and Mac M1 builds. ([#17](https://github.com/turbot/steampipe-plugin-datadog/pull/17))
 
 ## v0.0.3 [2021-12-15]
 
