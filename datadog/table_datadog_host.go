@@ -23,7 +23,21 @@ func tableDatadogHost(ctx context.Context) *plugin.Table {
 			// Top columns
 			{Name: "name", Type: proto.ColumnType_STRING, Description: "Name of the host."},
 			{Name: "id", Type: proto.ColumnType_STRING, Description: "ID of the host."},
+			{Name: "up", Type: proto.ColumnType_BOOL, Description: "Whether the expected metrics for the host have been received or not."},
+
+			// Other useful columns
 			{Name: "aws_name", Type: proto.ColumnType_STRING, Description: "AWS name of the host."},
+			{Name: "last_reported_time", Type: proto.ColumnType_INT, Description: "Last time the host reported a metric data point."},
+			{Name: "is_muted", Type: proto.ColumnType_BOOL, Description: "Whether or not the host is muted."},
+			{Name: "mute_timeout", Type: proto.ColumnType_BOOL, Description: "The timeout of the mute applied to the host."},
+
+			// JSON columns
+			{Name: "aliases", Type: proto.ColumnType_JSON, Description: "Aliases that the host goes by"},
+			{Name: "apps", Type: proto.ColumnType_JSON, Description: "Datadog integrations reporting metrics for the host"},
+			{Name: "meta", Type: proto.ColumnType_JSON, Description: "Host metadata."},
+			{Name: "metrics", Type: proto.ColumnType_JSON, Description: "Metics collected from the host"},
+			{Name: "sources", Type: proto.ColumnType_JSON, Description: "Source or cloud provider associated with the host."},
+			{Name: "tags_by_source", Type: proto.ColumnType_JSON, Description: "A list of tags for each data source (AWS, Datadog Agent etc)"},
 		},
 	}
 }
