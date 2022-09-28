@@ -5,7 +5,7 @@ package datadog
 import (
 	"bytes"
 	"context"
-	"io/ioutil"
+	"io"
 	"math"
 	"net/http"
 	"strconv"
@@ -45,9 +45,9 @@ func (t *CustomTransport) RoundTrip(req *http.Request) (*http.Response, error) {
 		resp, respErr := t.defaultTransport.RoundTrip(newRequest)
 		// Close the body so connection can be re-used
 		if resp != nil {
-			localVarBody, _ := ioutil.ReadAll(resp.Body)
+			localVarBody, _ := io.ReadAll(resp.Body)
 			resp.Body.Close()
-			resp.Body = ioutil.NopCloser(bytes.NewBuffer(localVarBody))
+			resp.Body = io.NopCloser(bytes.NewBuffer(localVarBody))
 		}
 		if respErr != nil {
 			return resp, respErr
