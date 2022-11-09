@@ -23,7 +23,7 @@ func tableDatadogSLO(ctx context.Context) *plugin.Table {
 		Columns: []*plugin.Column{
 			// Top columns
 			{Name: "name", Type: proto.ColumnType_STRING, Description: "Name of the SLO."},
-			{Name: "id", Type: proto.ColumnType_STRING, Description: "ID of the ."},
+			{Name: "id", Type: proto.ColumnType_STRING, Description: "ID of the SLO."},
 			{Name: "creator_email", Type: proto.ColumnType_STRING, Transform: transform.FromField("Creator.Email"), Description: "Email of the creator."},
 			{Name: "created_at", Type: proto.ColumnType_TIMESTAMP, Transform: transform.FromField("CreatedAt").Transform(convertDatetime), Description: "Timestamp of the SLO creation."},
 			{Name: "type", Type: proto.ColumnType_STRING, Description: "The type of the SLO. For more information about type, see https://docs.datadoghq.com/monitors/service_level_objectives/."},
