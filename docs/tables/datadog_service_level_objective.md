@@ -28,7 +28,7 @@ select
 from
   datadog_service_level_objective
 where
-  type in ('metric');
+  type = ('metric');
 ```
 
 ### List SLOs that are type monitor and have thresholds set to 2.5 9's over 7 days
@@ -42,6 +42,6 @@ select
 from
   datadog_service_level_objective
 where
-  type in ('monitor') and
+  type = ('monitor') and
   thresholds @> '[{"target":99.5,"target_display":"99.5","timeframe":"7d"}]'::jsonb;
 ```
