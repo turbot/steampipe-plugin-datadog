@@ -16,7 +16,7 @@ func tableDatadogServiceLevelObjective(ctx context.Context) *plugin.Table {
 		List: &plugin.ListConfig{
 			Hydrate: listSLOs,
 			KeyColumns: plugin.KeyColumnSlice{
-				{Name: "name", Require: plugin.Optional},
+				{Name: "id", Require: plugin.Optional},
 			},
 		},
 		Columns: []*plugin.Column{
@@ -29,10 +29,10 @@ func tableDatadogServiceLevelObjective(ctx context.Context) *plugin.Table {
 
 			// Other useful columns
 			{Name: "modified_at", Type: proto.ColumnType_TIMESTAMP, Transform: transform.FromField("ModifiedAt").Transform(convertDatetime), Description: "Last timestamp when the monitor was edited."},
-			{Name: "monitor_ids", Type: proto.ColumnType_STRING, Description: "The monitor based SLO have monitors assiciated with them. Shows list of associated monitors"},
-			{Name: "query", Type: proto.ColumnType_STRING, Description: "The Metric based SLOs use querys to detiremine state. Shows associated query"},
 
 			// JSON columns
+			{Name: "monitor_ids", Type: proto.ColumnType_JSON, Description: "A list of monitor ids that defines the scope of a monitor service level objective."},
+			{Name: "query", Type: proto.ColumnType_JSON, Description: "The Metric based SLOs use queries to determine the state. Shows associated query."},
 			{Name: "monitor_tags", Type: proto.ColumnType_JSON, Description: "If monitors are associated with SLO have tags they will show here."},
 			{Name: "tags", Type: proto.ColumnType_JSON, Description: "Tags associated to SLO."},
 			{Name: "thresholds", Type: proto.ColumnType_JSON, Description: "Thresholds that are set for the SLOs."},
