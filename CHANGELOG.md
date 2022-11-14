@@ -1,10 +1,3 @@
-## v0.3.0 [2022-11-09]
-
-_What's new?_
-
-- New tables added
-  - [datadog_slo](https://hub.steampipe.io/plugins/turbot/datadog/tables/datadog_slo)
-
 ## v0.2.0 [2022-09-28]
 
 _Dependencies_
