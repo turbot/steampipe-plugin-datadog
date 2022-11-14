@@ -214,3 +214,15 @@ func valueFromNullable(_ context.Context, d *transform.TransformData) (interface
 	}
 	return nil, nil
 }
+
+// Timestamp is provided in Epoch so we need to transform it to unix timestamp.
+func convertDatetime(ctx context.Context, d *transform.TransformData) (interface{}, error) {
+	if d.Value == nil {
+		return nil, nil
+	}
+	ts := d.Value.(*int64)
+	plugin.Logger(ctx).Info("Value of d.Value", d.Value)
+	t := time.Unix(*ts, 0)
+
+	return t, nil
+}

@@ -1,4 +1,4 @@
-# Table: datadog_slo
+# Table: datadog_service_level_objective
 
 <description>
 
@@ -14,7 +14,7 @@ select
   created_at,
   creator_email
 from
-  datadog_slo;
+  datadog_service_level_objective;
 ```
 
 ### List metric type SLOs
@@ -26,7 +26,7 @@ select
   created_at,
   monitor_ids,
 from
-  datadog_slo
+  datadog_service_level_objective
 where
   type in ('metric');
 ```
@@ -40,7 +40,7 @@ select
   thresholds,
   created_at
 from
-  datadog_slo
+  datadog_service_level_objective
 where
   type in ('monitor') and
   thresholds @> '[{"target":99.5,"target_display":"99.5","timeframe":"7d"}]'::jsonb;

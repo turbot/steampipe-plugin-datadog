@@ -2,7 +2,6 @@ package datadog
 
 import (
 	"context"
-	"time"
 
 	datadog "github.com/DataDog/datadog-api-client-go/api/v1/datadog"
 	"github.com/turbot/steampipe-plugin-sdk/v4/grpc/proto"
@@ -10,9 +9,9 @@ import (
 	"github.com/turbot/steampipe-plugin-sdk/v4/plugin/transform"
 )
 
-func tableDatadogSLO(ctx context.Context) *plugin.Table {
+func tableDatadogServiceLevelObjective(ctx context.Context) *plugin.Table {
 	return &plugin.Table{
-		Name:        "datadog_slo",
+		Name:        "datadog_service_level_objective",
 		Description: "A SLO provides a target percentage of a specific metric over a certain period of time.",
 		List: &plugin.ListConfig{
 			Hydrate: listSLOs,
@@ -71,16 +70,4 @@ func listSLOs(ctx context.Context, d *plugin.QueryData, _ *plugin.HydrateData) (
 	}
 
 	return nil, nil
-}
-
-// Timestamp is provided in Epoch so we need to transform it to unix timestamp.
-func convertDatetime(ctx context.Context, d *transform.TransformData) (interface{}, error) {
-	if d.Value == nil {
-		return nil, nil
-	}
-	ts := d.Value.(*int64)
-	plugin.Logger(ctx).Info("Value of d.Value", d.Value)
-	t := time.Unix(*ts, 0)
-
-	return t, nil
 }
