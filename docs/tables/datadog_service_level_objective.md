@@ -1,6 +1,6 @@
 # Table: datadog_service_level_objective
 
-<description>
+A SLO provides a target percentage of a specific metric over a certain period of time.
 
 ## Examples
 
