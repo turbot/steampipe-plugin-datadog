@@ -13,6 +13,10 @@ func tableDatadogServiceLevelObjective(ctx context.Context) *plugin.Table {
 	return &plugin.Table{
 		Name:        "datadog_service_level_objective",
 		Description: "A SLO provides a target percentage of a specific metric over a certain period of time.",
+		Get: &plugin.GetConfig{
+			Hydrate:    getSLO,
+			KeyColumns: plugin.SingleColumn("id"),
+		},
 		List: &plugin.ListConfig{
 			Hydrate: listSLOs,
 			KeyColumns: plugin.KeyColumnSlice{
@@ -31,6 +35,7 @@ func tableDatadogServiceLevelObjective(ctx context.Context) *plugin.Table {
 			{Name: "modified_at", Type: proto.ColumnType_TIMESTAMP, Transform: transform.FromField("ModifiedAt").Transform(convertDatetime), Description: "Last timestamp when the monitor was edited."},
 
 			// JSON columns
+			{Name: "configured_alert_ids", Type: proto.ColumnType_JSON, Hydrate: getSLO, Description: "Get the IDs of SLO monitors that reference this SLO."},
 			{Name: "monitor_ids", Type: proto.ColumnType_JSON, Description: "A list of monitor ids that defines the scope of a monitor service level objective."},
 			{Name: "query", Type: proto.ColumnType_JSON, Description: "The Metric based SLOs use queries to determine the state. Shows associated query."},
 			{Name: "monitor_tags", Type: proto.ColumnType_JSON, Description: "If monitors are associated with SLO have tags they will show here."},
@@ -43,7 +48,7 @@ func tableDatadogServiceLevelObjective(ctx context.Context) *plugin.Table {
 func listSLOs(ctx context.Context, d *plugin.QueryData, _ *plugin.HydrateData) (interface{}, error) {
 	ctx, apiClient, err := connectV1(ctx, d)
 	if err != nil {
-		plugin.Logger(ctx).Error("datadog_slo.listSLOs", "connection_error", err)
+		plugin.Logger(ctx).Error("datadog_service_level_objective.listSLOs", "connection_error", err)
 		return nil, err
 	}
 
@@ -57,7 +62,7 @@ func listSLOs(ctx context.Context, d *plugin.QueryData, _ *plugin.HydrateData) (
 	resp, _, err := apiClient.ServiceLevelObjectivesApi.ListSLOs(ctx, opts)
 
 	if err != nil {
-		plugin.Logger(ctx).Error("datadog_slo.listSLOs", "query_error", err)
+		plugin.Logger(ctx).Error("datadog_service_level_objective.listSLOs", "query_error", err)
 		return nil, err
 	}
 
@@ -70,4 +75,36 @@ func listSLOs(ctx context.Context, d *plugin.QueryData, _ *plugin.HydrateData) (
 	}
 
 	return nil, nil
+}
+
+func getSLO(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateData) (interface{}, error) {
+
+	var sloID string
+	if h.Item != nil {
+		sloID = *h.Item.(datadog.ServiceLevelObjective).Id
+	} else {
+		sloID = d.KeyColumnQuals["id"].GetStringValue()
+	}
+
+	withConfiguredAlertIds := true
+	opts := datadog.GetSLOOptionalParameters{
+		WithConfiguredAlertIds: &withConfiguredAlertIds,
+	}
+
+	ctx, apiClient, err := connectV1(ctx, d)
+	if err != nil {
+		plugin.Logger(ctx).Error("datadog_service_level_objective.getSLO", "connection_error", err)
+		return nil, err
+	}
+
+	resp, _, err := apiClient.ServiceLevelObjectivesApi.GetSLO(ctx, sloID, opts)
+	if err != nil {
+		plugin.Logger(ctx).Error("datadog_service_level_objective.getSLO", "query_error", err)
+		if err.Error() == "404 Not Found" {
+			return nil, nil
+		}
+		return nil, err
+	}
+
+	return resp.GetData(), nil
 }
