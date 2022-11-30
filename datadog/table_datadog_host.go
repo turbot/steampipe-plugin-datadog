@@ -5,20 +5,15 @@ import (
 	"fmt"
 
 	datadog "github.com/DataDog/datadog-api-client-go/api/v1/datadog"
-	"github.com/turbot/steampipe-plugin-sdk/v3/grpc/proto"
-	"github.com/turbot/steampipe-plugin-sdk/v3/plugin"
-	"github.com/turbot/steampipe-plugin-sdk/v3/plugin/transform"
+	"github.com/turbot/steampipe-plugin-sdk/v4/grpc/proto"
+	"github.com/turbot/steampipe-plugin-sdk/v4/plugin"
+	"github.com/turbot/steampipe-plugin-sdk/v4/plugin/transform"
 )
 
 func tableDatadogHost(ctx context.Context) *plugin.Table {
 	return &plugin.Table{
 		Name:        "datadog_host",
 		Description: "A host is any piece of infrastructure that runs an instance of the Datadog Agent such as a bare metal instance or a VM.",
-		// There is no Datadog hosts endpoint for getting a single host so instead we use a filter to perform an exact match
-		Get: &plugin.GetConfig{
-			Hydrate:    listHosts,
-			KeyColumns: plugin.SingleColumn("name"),
-		},
 		List: &plugin.ListConfig{
 			Hydrate: listHosts,
 			KeyColumns: plugin.KeyColumnSlice{
@@ -35,7 +30,7 @@ func tableDatadogHost(ctx context.Context) *plugin.Table {
 			{Name: "aws_name", Type: proto.ColumnType_STRING, Description: "AWS name of the host."},
 			{Name: "last_reported_time", Type: proto.ColumnType_TIMESTAMP, Transform: transform.FromGo().Transform(transform.UnixToTimestamp), Description: "Last time the host reported a metric data point."},
 			{Name: "is_muted", Type: proto.ColumnType_BOOL, Description: "Whether or not the host is muted."},
-			{Name: "mute_timeout", Type: proto.ColumnType_BOOL, Description: "The timeout of the mute applied to the host."},
+			{Name: "mute_timeout", Type: proto.ColumnType_INT, Description: "The timeout of the mute applied to the host."},
 
 			// JSON columns
 			{Name: "aliases", Type: proto.ColumnType_JSON, Description: "An array of aliases that the host is known by such as AWS EC2 instance name, AWS internal IP address etc."},
@@ -67,35 +62,37 @@ func listHosts(ctx context.Context, d *plugin.QueryData, _ *plugin.HydrateData) 
 	opts.WithIncludeHostsMetadata(true)
 	opts.WithIncludeMutedHostsData(true)
 
-	paging := true
+	limit := d.QueryContext.Limit
+	if d.QueryContext.Limit != nil {
+		if *limit < 1000 {
+			opts.WithCount(int64(*limit))
+		}
+	}
+
 	count := int64(0)
 
-	for paging {
+	for {
 		resp, _, err := apiClient.HostsApi.ListHosts(ctx, opts)
 		if err != nil {
-			plugin.Logger(ctx).Error("datadog_monitor.listMonitors", "query_error", err)
+			plugin.Logger(ctx).Error("datadog_host.listHosts", "query_error", err)
 			return nil, err
 		}
 
 		for _, host := range *resp.HostList {
-			count += resp.GetTotalReturned()
+			count++
 			d.StreamListItem(ctx, host)
 			// Check if context has been cancelled or if the limit has been hit (if specified)
 			if d.QueryStatus.RowsRemaining(ctx) == 0 {
 				return nil, nil
 			}
 		}
+		plugin.Logger(ctx).Trace("Check count", count)
 
-		// Break loop if using a filter, which is guaranteed to be an exact match
-		if name != "" {
+		// Break loop if no results are returned
+		if len(*resp.HostList) == 0 {
 			return nil, nil
 		}
-		// Break loop if host list is less than the maximum page size of 1000 items
-		if count > 1000 {
-			return nil, nil
-		}
-		opts.WithFrom(count)
-	}
-
-	return nil, nil
+		// Set the start point for the next page
+		opts.WithStart(count)
+	} 
 }
