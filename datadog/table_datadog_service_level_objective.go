@@ -12,7 +12,7 @@ import (
 func tableDatadogServiceLevelObjective(ctx context.Context) *plugin.Table {
 	return &plugin.Table{
 		Name:        "datadog_service_level_objective",
-		Description: "A SLO provides a target percentage of a specific metric over a certain period of time.",
+		Description: "An SLO(Service Level Objective) provides a target percentage of a specific metric over a certain period of time.",
 		Get: &plugin.GetConfig{
 			Hydrate:    getSLO,
 			KeyColumns: plugin.SingleColumn("id"),
@@ -36,10 +36,12 @@ func tableDatadogServiceLevelObjective(ctx context.Context) *plugin.Table {
 
 			// JSON columns
 			{Name: "configured_alert_ids", Type: proto.ColumnType_JSON, Hydrate: getSLO, Description: "Get the IDs of SLO monitors that reference this SLO."},
+			{Name: "description", Type: proto.ColumnType_JSON, Description: "Description of the SLO."},
+			{Name: "groups", Type: proto.ColumnType_JSON, Hydrate: getSLO, Description: "A list of (up to 20) monitor groups that narrow the scope of a monitor service level objective."},
 			{Name: "monitor_ids", Type: proto.ColumnType_JSON, Description: "A list of monitor ids that defines the scope of a monitor service level objective."},
 			{Name: "query", Type: proto.ColumnType_JSON, Description: "The Metric based SLOs use queries to determine the state. Shows associated query."},
-			{Name: "monitor_tags", Type: proto.ColumnType_JSON, Description: "If monitors are associated with SLO have tags they will show here."},
-			{Name: "tags", Type: proto.ColumnType_JSON, Description: "Tags associated to SLO."},
+			{Name: "monitor_tags", Type: proto.ColumnType_JSON, Description: "If monitors that are associated with SLO have tags they will show here."},
+			{Name: "tags", Type: proto.ColumnType_JSON, Description: "Tags associated with SLO."},
 			{Name: "thresholds", Type: proto.ColumnType_JSON, Description: "Thresholds that are set for the SLOs."},
 		},
 	}
