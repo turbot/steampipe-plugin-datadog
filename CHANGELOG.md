@@ -1,3 +1,10 @@
+## v0.3.0 [2022-12-28]
+
+_What's new?_
+
+- New tables added
+  - [datadog_service_level_objective](https://hub.steampipe.io/plugins/turbot/datadog/tables/datadog_service_level_objective) ([#25](https://github.com/turbot/steampipe-plugin-datadog/pull/25)) (Thanks [@whume](https://github.com/whume) for the contribution!)
+
 ## v0.2.0 [2022-09-28]
 
 _Dependencies_
