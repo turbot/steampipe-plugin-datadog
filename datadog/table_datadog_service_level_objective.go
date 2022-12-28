@@ -19,9 +19,6 @@ func tableDatadogServiceLevelObjective(ctx context.Context) *plugin.Table {
 		},
 		List: &plugin.ListConfig{
 			Hydrate: listSLOs,
-			KeyColumns: plugin.KeyColumnSlice{
-				{Name: "id", Require: plugin.Optional},
-			},
 		},
 		Columns: []*plugin.Column{
 			// Top columns
@@ -56,9 +53,8 @@ func listSLOs(ctx context.Context, d *plugin.QueryData, _ *plugin.HydrateData) (
 
 	opts := datadog.ListSLOsOptionalParameters{}
 
-	id := d.KeyColumnQualString("id")
-	if id != "" {
-		opts.WithIds(id)
+	if d.QueryContext.Limit != nil {
+		opts.Limit = d.QueryContext.Limit
 	}
 
 	resp, _, err := apiClient.ServiceLevelObjectivesApi.ListSLOs(ctx, opts)
@@ -88,6 +84,11 @@ func getSLO(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateData) (in
 		sloID = d.KeyColumnQuals["id"].GetStringValue()
 	}
 
+	// Empty value check
+	if sloID == "" {
+		return nil, nil
+	}
+
 	withConfiguredAlertIds := true
 	opts := datadog.GetSLOOptionalParameters{
 		WithConfiguredAlertIds: &withConfiguredAlertIds,
@@ -101,10 +102,10 @@ func getSLO(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateData) (in
 
 	resp, _, err := apiClient.ServiceLevelObjectivesApi.GetSLO(ctx, sloID, opts)
 	if err != nil {
-		plugin.Logger(ctx).Error("datadog_service_level_objective.getSLO", "query_error", err)
 		if err.Error() == "404 Not Found" {
 			return nil, nil
 		}
+		plugin.Logger(ctx).Error("datadog_service_level_objective.getSLO", "query_error", err)
 		return nil, err
 	}
 
