@@ -25,6 +25,7 @@ func Plugin(ctx context.Context) *plugin.Plugin {
 			"datadog_role":                       tableDatadogRole(ctx),
 			"datadog_security_monitoring_rule":   tableDatadogSecurityMonitoringRule(ctx),
 			"datadog_security_monitoring_signal": tableDatadogSecurityMonitoringSignal(ctx),
+			"datadog_service_level_objective":    tableDatadogServiceLevelObjective(ctx),
 			"datadog_user":                       tableDatadogUser(ctx),
 		},
 	}
