@@ -86,7 +86,6 @@ func listHosts(ctx context.Context, d *plugin.QueryData, _ *plugin.HydrateData) 
 				return nil, nil
 			}
 		}
-		plugin.Logger(ctx).Trace("Check count", count)
 
 		// Break loop if no results are returned
 		if len(*resp.HostList) == 0 {
