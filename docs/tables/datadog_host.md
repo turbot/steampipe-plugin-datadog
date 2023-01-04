@@ -49,7 +49,6 @@ group by
   tags;
 ```
 
-
 ### List hosts that have reported metrics within the last 10 minutes
 
 ```sql
