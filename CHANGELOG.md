@@ -1,3 +1,10 @@
+## v0.4.0 [2023-01-05]
+
+_What's new?_
+
+- New tables added
+  - [datadog_host](https://hub.steampipe.io/plugins/turbot/datadog/tables/datadog_host) ([#24](https://github.com/turbot/steampipe-plugin-datadog/pull/24)) (Thanks [@marcus-crane](https://github.com/marcus-crane) for the contribution!)
+
 ## v0.3.0 [2022-12-28]
 
 _What's new?_
