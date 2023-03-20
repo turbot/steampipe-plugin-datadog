@@ -3,9 +3,9 @@ package datadog
 import (
 	"context"
 
-	"github.com/turbot/steampipe-plugin-sdk/v4/grpc/proto"
-	"github.com/turbot/steampipe-plugin-sdk/v4/plugin"
-	"github.com/turbot/steampipe-plugin-sdk/v4/plugin/transform"
+	"github.com/turbot/steampipe-plugin-sdk/v5/grpc/proto"
+	"github.com/turbot/steampipe-plugin-sdk/v5/plugin"
+	"github.com/turbot/steampipe-plugin-sdk/v5/plugin/transform"
 )
 
 func tableDatadogLogsMetric(ctx context.Context) *plugin.Table {
@@ -49,7 +49,7 @@ func listLogsMetrics(ctx context.Context, d *plugin.QueryData, _ *plugin.Hydrate
 	for _, logMetric := range resp.GetData() {
 		d.StreamListItem(ctx, logMetric)
 		// Check if context has been cancelled or if the limit has been hit (if specified)
-		if d.QueryStatus.RowsRemaining(ctx) == 0 {
+		if d.RowsRemaining(ctx) == 0 {
 			return nil, nil
 		}
 	}
