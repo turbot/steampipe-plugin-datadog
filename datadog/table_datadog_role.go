@@ -52,7 +52,7 @@ func listRoles(ctx context.Context, d *plugin.QueryData, _ *plugin.HydrateData) 
 		PageNumber: datadog.PtrInt64(int64(0)),
 	}
 
-	name := d.KeyColumnQualString("name")
+	name := d.EqualsQualString("name")
 	if name != "" {
 		opts.WithFilter(name)
 	}
@@ -95,7 +95,7 @@ func getRole(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateData) (i
 	if h.Item != nil {
 		roleID = *h.Item.(datadog.Role).Id
 	} else {
-		roleID = d.KeyColumnQualString("id")
+		roleID = d.EqualsQualString("id")
 	}
 
 	if strings.TrimSpace(roleID) == "" {

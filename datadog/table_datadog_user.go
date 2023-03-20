@@ -63,7 +63,7 @@ func listUsers(ctx context.Context, d *plugin.QueryData, _ *plugin.HydrateData) 
 		// Filter:     &filter, //TODO Need to explore this field
 	}
 
-	filterStatus := d.KeyColumnQualString("status")
+	filterStatus := d.EqualsQualString("status")
 	if filterStatus != "" {
 		opts.WithFilterStatus(filterStatus)
 	}
@@ -109,7 +109,7 @@ func getUser(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateData) (i
 	if h.Item != nil {
 		userID = *h.Item.(datadog.User).Id
 	} else {
-		userID = d.KeyColumnQualString("id")
+		userID = d.EqualsQualString("id")
 	}
 
 	if strings.TrimSpace(userID) == "" {

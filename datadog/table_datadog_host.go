@@ -52,7 +52,7 @@ func listHosts(ctx context.Context, d *plugin.QueryData, _ *plugin.HydrateData) 
 
 	opts := datadog.ListHostsOptionalParameters{}
 
-	name := d.KeyColumnQualString("name")
+	name := d.EqualsQualString("name")
 	hostNameFilter := fmt.Sprintf("exact:host:%s", name)
 	if name != "" {
 		opts.WithFilter(hostNameFilter)

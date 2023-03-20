@@ -60,7 +60,7 @@ func listLogEvent(ctx context.Context, d *plugin.QueryData, _ *plugin.HydrateDat
 	}
 
 	// Search syntax - https://docs.datadoghq.com/logs/explorer/search_syntax/
-	query := d.KeyColumnQualString("query")
+	query := d.EqualsQualString("query")
 	if query != "" {
 		opts.WithFilterQuery(query)
 	}

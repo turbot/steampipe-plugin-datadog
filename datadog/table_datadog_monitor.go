@@ -55,7 +55,7 @@ func listMonitors(ctx context.Context, d *plugin.QueryData, _ *plugin.HydrateDat
 	// page := int64(0) // int64 | The page to start paginating from. If this argument is not specified, the request returns all monitors without pagination.
 	opts := datadog.ListMonitorsOptionalParameters{}
 
-	name := d.KeyColumnQualString("name")
+	name := d.EqualsQualString("name")
 	if name != "" {
 		opts.WithName(name)
 	}

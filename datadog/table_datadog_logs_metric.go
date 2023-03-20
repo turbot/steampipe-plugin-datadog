@@ -58,7 +58,7 @@ func listLogsMetrics(ctx context.Context, d *plugin.QueryData, _ *plugin.Hydrate
 }
 
 func getLogsMetric(ctx context.Context, d *plugin.QueryData, _ *plugin.HydrateData) (interface{}, error) {
-	metricID := d.KeyColumnQualString("id")
+	metricID := d.EqualsQualString("id")
 	ctx, apiClient, _, err := connectV2(ctx, d)
 	if err != nil {
 		plugin.Logger(ctx).Error("datadog_logs_metric.getLogsMetric", "connection_error", err)

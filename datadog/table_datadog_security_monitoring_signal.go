@@ -43,7 +43,7 @@ func listSecurityMonitoringSignals(ctx context.Context, d *plugin.QueryData, _ *
 		plugin.Logger(ctx).Error("datadog_security_monitoring_signal.listSecurityMonitoringSignals", "connection_error", err)
 		return nil, err
 	}
-	filterQuery := d.KeyColumnQualString("filter_query")
+	filterQuery := d.EqualsQualString("filter_query")
 	filterFrom := time.Now().AddDate(0, 0, -1) // By default list signals for last one day
 	filterTo := time.Now()
 	pageLimit := int32(50)

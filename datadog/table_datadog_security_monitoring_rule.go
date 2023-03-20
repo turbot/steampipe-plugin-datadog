@@ -89,7 +89,7 @@ func getSecurityMonitoringRule(ctx context.Context, d *plugin.QueryData, h *plug
 	if h.Item != nil {
 		ruleID = *h.Item.(datadog.SecurityMonitoringRuleResponse).Id
 	} else {
-		ruleID = d.KeyColumnQualString("id")
+		ruleID = d.EqualsQualString("id")
 	}
 
 	if strings.TrimSpace(ruleID) == "" {
