@@ -5,9 +5,9 @@ import (
 	"strings"
 
 	datadog "github.com/DataDog/datadog-api-client-go/api/v2/datadog"
-	"github.com/turbot/steampipe-plugin-sdk/v4/grpc/proto"
-	"github.com/turbot/steampipe-plugin-sdk/v4/plugin"
-	"github.com/turbot/steampipe-plugin-sdk/v4/plugin/transform"
+	"github.com/turbot/steampipe-plugin-sdk/v5/grpc/proto"
+	"github.com/turbot/steampipe-plugin-sdk/v5/plugin"
+	"github.com/turbot/steampipe-plugin-sdk/v5/plugin/transform"
 )
 
 func tableDatadogRole(ctx context.Context) *plugin.Table {
@@ -52,7 +52,7 @@ func listRoles(ctx context.Context, d *plugin.QueryData, _ *plugin.HydrateData) 
 		PageNumber: datadog.PtrInt64(int64(0)),
 	}
 
-	name := d.KeyColumnQualString("name")
+	name := d.EqualsQualString("name")
 	if name != "" {
 		opts.WithFilter(name)
 	}
@@ -69,7 +69,7 @@ func listRoles(ctx context.Context, d *plugin.QueryData, _ *plugin.HydrateData) 
 			count++
 			d.StreamListItem(ctx, role)
 			// Check if context has been cancelled or if the limit has been hit (if specified)
-			if d.QueryStatus.RowsRemaining(ctx) == 0 {
+			if d.RowsRemaining(ctx) == 0 {
 				return nil, nil
 			}
 		}
@@ -95,7 +95,7 @@ func getRole(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateData) (i
 	if h.Item != nil {
 		roleID = *h.Item.(datadog.Role).Id
 	} else {
-		roleID = d.KeyColumnQualString("id")
+		roleID = d.EqualsQualString("id")
 	}
 
 	if strings.TrimSpace(roleID) == "" {

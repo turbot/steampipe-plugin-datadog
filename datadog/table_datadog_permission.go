@@ -3,9 +3,9 @@ package datadog
 import (
 	"context"
 
-	"github.com/turbot/steampipe-plugin-sdk/v4/grpc/proto"
-	"github.com/turbot/steampipe-plugin-sdk/v4/plugin"
-	"github.com/turbot/steampipe-plugin-sdk/v4/plugin/transform"
+	"github.com/turbot/steampipe-plugin-sdk/v5/grpc/proto"
+	"github.com/turbot/steampipe-plugin-sdk/v5/plugin"
+	"github.com/turbot/steampipe-plugin-sdk/v5/plugin/transform"
 )
 
 func tableDatadogPermission(ctx context.Context) *plugin.Table {
@@ -48,7 +48,7 @@ func listPermissions(ctx context.Context, d *plugin.QueryData, _ *plugin.Hydrate
 	for _, permission := range resp.GetData() {
 		d.StreamListItem(ctx, permission)
 		// Check if context has been cancelled or if the limit has been hit (if specified)
-		if d.QueryStatus.RowsRemaining(ctx) == 0 {
+		if d.RowsRemaining(ctx) == 0 {
 			return nil, nil
 		}
 	}

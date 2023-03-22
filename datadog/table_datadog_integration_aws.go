@@ -4,8 +4,8 @@ import (
 	"context"
 
 	datadog "github.com/DataDog/datadog-api-client-go/api/v1/datadog"
-	"github.com/turbot/steampipe-plugin-sdk/v4/grpc/proto"
-	"github.com/turbot/steampipe-plugin-sdk/v4/plugin"
+	"github.com/turbot/steampipe-plugin-sdk/v5/grpc/proto"
+	"github.com/turbot/steampipe-plugin-sdk/v5/plugin"
 )
 
 func tableDatadogIntegrationAws(ctx context.Context) *plugin.Table {
@@ -50,14 +50,14 @@ func listAWSIntegrations(ctx context.Context, d *plugin.QueryData, _ *plugin.Hyd
 
 	// https://github.com/DataDog/datadog-api-client-go/blob/master/api/v1/datadog/docs/AWSIntegrationApi.md#ListAWSAccounts
 	opts := datadog.ListAWSAccountsOptionalParameters{}
-	if d.KeyColumnQualString("account_id") != "" {
-		opts.WithAccountId(d.KeyColumnQualString("account_id"))
+	if d.EqualsQualString("account_id") != "" {
+		opts.WithAccountId(d.EqualsQualString("account_id"))
 	}
-	if d.KeyColumnQualString("role_name") != "" {
-		opts.WithRoleName(d.KeyColumnQualString("role_name"))
+	if d.EqualsQualString("role_name") != "" {
+		opts.WithRoleName(d.EqualsQualString("role_name"))
 	}
-	if d.KeyColumnQualString("access_key_id") != "" {
-		opts.WithAccessKeyId(d.KeyColumnQualString("access_key_id"))
+	if d.EqualsQualString("access_key_id") != "" {
+		opts.WithAccessKeyId(d.EqualsQualString("access_key_id"))
 	}
 
 	// Paging not supported by this API as of Date 10-25-2021
@@ -70,7 +70,7 @@ func listAWSIntegrations(ctx context.Context, d *plugin.QueryData, _ *plugin.Hyd
 	for _, account := range resp.GetAccounts() {
 		d.StreamListItem(ctx, account)
 		// Check if context has been cancelled or if the limit has been hit (if specified)
-		if d.QueryStatus.RowsRemaining(ctx) == 0 {
+		if d.RowsRemaining(ctx) == 0 {
 			return nil, nil
 		}
 	}

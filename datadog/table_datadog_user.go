@@ -5,9 +5,9 @@ import (
 	"strings"
 
 	datadog "github.com/DataDog/datadog-api-client-go/api/v2/datadog"
-	"github.com/turbot/steampipe-plugin-sdk/v4/grpc/proto"
-	"github.com/turbot/steampipe-plugin-sdk/v4/plugin"
-	"github.com/turbot/steampipe-plugin-sdk/v4/plugin/transform"
+	"github.com/turbot/steampipe-plugin-sdk/v5/grpc/proto"
+	"github.com/turbot/steampipe-plugin-sdk/v5/plugin"
+	"github.com/turbot/steampipe-plugin-sdk/v5/plugin/transform"
 )
 
 func tableDatadogUser(ctx context.Context) *plugin.Table {
@@ -63,7 +63,7 @@ func listUsers(ctx context.Context, d *plugin.QueryData, _ *plugin.HydrateData) 
 		// Filter:     &filter, //TODO Need to explore this field
 	}
 
-	filterStatus := d.KeyColumnQualString("status")
+	filterStatus := d.EqualsQualString("status")
 	if filterStatus != "" {
 		opts.WithFilterStatus(filterStatus)
 	}
@@ -82,7 +82,7 @@ func listUsers(ctx context.Context, d *plugin.QueryData, _ *plugin.HydrateData) 
 			count++
 			d.StreamListItem(ctx, user)
 			// Check if context has been cancelled or if the limit has been hit (if specified)
-			if d.QueryStatus.RowsRemaining(ctx) == 0 {
+			if d.RowsRemaining(ctx) == 0 {
 				return nil, nil
 			}
 		}
@@ -109,7 +109,7 @@ func getUser(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateData) (i
 	if h.Item != nil {
 		userID = *h.Item.(datadog.User).Id
 	} else {
-		userID = d.KeyColumnQualString("id")
+		userID = d.EqualsQualString("id")
 	}
 
 	if strings.TrimSpace(userID) == "" {

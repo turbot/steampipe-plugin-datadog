@@ -5,8 +5,8 @@ import (
 	"strings"
 
 	datadog "github.com/DataDog/datadog-api-client-go/api/v2/datadog"
-	"github.com/turbot/steampipe-plugin-sdk/v4/grpc/proto"
-	"github.com/turbot/steampipe-plugin-sdk/v4/plugin"
+	"github.com/turbot/steampipe-plugin-sdk/v5/grpc/proto"
+	"github.com/turbot/steampipe-plugin-sdk/v5/plugin"
 )
 
 func tableDatadogSecurityMonitoringRule(ctx context.Context) *plugin.Table {
@@ -70,7 +70,7 @@ func listSecurityMonitoringRules(ctx context.Context, d *plugin.QueryData, _ *pl
 			count++
 			d.StreamListItem(ctx, securityMonitoringRule)
 			// Check if context has been cancelled or if the limit has been hit (if specified)
-			if d.QueryStatus.RowsRemaining(ctx) == 0 {
+			if d.RowsRemaining(ctx) == 0 {
 				return nil, nil
 			}
 		}
@@ -89,7 +89,7 @@ func getSecurityMonitoringRule(ctx context.Context, d *plugin.QueryData, h *plug
 	if h.Item != nil {
 		ruleID = *h.Item.(datadog.SecurityMonitoringRuleResponse).Id
 	} else {
-		ruleID = d.KeyColumnQualString("id")
+		ruleID = d.EqualsQualString("id")
 	}
 
 	if strings.TrimSpace(ruleID) == "" {

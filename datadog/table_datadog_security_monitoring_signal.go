@@ -5,9 +5,9 @@ import (
 	"time"
 
 	datadog "github.com/DataDog/datadog-api-client-go/api/v2/datadog"
-	"github.com/turbot/steampipe-plugin-sdk/v4/grpc/proto"
-	"github.com/turbot/steampipe-plugin-sdk/v4/plugin"
-	"github.com/turbot/steampipe-plugin-sdk/v4/plugin/transform"
+	"github.com/turbot/steampipe-plugin-sdk/v5/grpc/proto"
+	"github.com/turbot/steampipe-plugin-sdk/v5/plugin"
+	"github.com/turbot/steampipe-plugin-sdk/v5/plugin/transform"
 )
 
 func tableDatadogSecurityMonitoringSignal(ctx context.Context) *plugin.Table {
@@ -43,7 +43,7 @@ func listSecurityMonitoringSignals(ctx context.Context, d *plugin.QueryData, _ *
 		plugin.Logger(ctx).Error("datadog_security_monitoring_signal.listSecurityMonitoringSignals", "connection_error", err)
 		return nil, err
 	}
-	filterQuery := d.KeyColumnQualString("filter_query")
+	filterQuery := d.EqualsQualString("filter_query")
 	filterFrom := time.Now().AddDate(0, 0, -1) // By default list signals for last one day
 	filterTo := time.Now()
 	pageLimit := int32(50)
@@ -102,7 +102,7 @@ func listSecurityMonitoringSignals(ctx context.Context, d *plugin.QueryData, _ *
 		for _, securityMonitoringSignal := range resp.GetData() {
 			d.StreamListItem(ctx, securityMonitoringSignal)
 			// Check if context has been cancelled or if the limit has been hit (if specified)
-			if d.QueryStatus.RowsRemaining(ctx) == 0 {
+			if d.RowsRemaining(ctx) == 0 {
 				return nil, nil
 			}
 		}

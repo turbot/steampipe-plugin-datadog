@@ -4,9 +4,9 @@ import (
 	"context"
 
 	datadog "github.com/DataDog/datadog-api-client-go/api/v1/datadog"
-	"github.com/turbot/steampipe-plugin-sdk/v4/grpc/proto"
-	"github.com/turbot/steampipe-plugin-sdk/v4/plugin"
-	"github.com/turbot/steampipe-plugin-sdk/v4/plugin/transform"
+	"github.com/turbot/steampipe-plugin-sdk/v5/grpc/proto"
+	"github.com/turbot/steampipe-plugin-sdk/v5/plugin"
+	"github.com/turbot/steampipe-plugin-sdk/v5/plugin/transform"
 )
 
 func tableDatadogServiceLevelObjective(ctx context.Context) *plugin.Table {
@@ -67,7 +67,7 @@ func listSLOs(ctx context.Context, d *plugin.QueryData, _ *plugin.HydrateData) (
 	for _, slo := range resp.GetData() {
 		d.StreamListItem(ctx, slo)
 		// Check if context has been cancelled or if the limit has been hit (if specified)
-		if d.QueryStatus.RowsRemaining(ctx) == 0 {
+		if d.RowsRemaining(ctx) == 0 {
 			return nil, nil
 		}
 	}
@@ -81,7 +81,7 @@ func getSLO(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateData) (in
 	if h.Item != nil {
 		sloID = *h.Item.(datadog.ServiceLevelObjective).Id
 	} else {
-		sloID = d.KeyColumnQuals["id"].GetStringValue()
+		sloID = d.EqualsQuals["id"].GetStringValue()
 	}
 
 	// Empty value check

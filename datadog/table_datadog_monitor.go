@@ -4,9 +4,9 @@ import (
 	"context"
 
 	datadog "github.com/DataDog/datadog-api-client-go/api/v1/datadog"
-	"github.com/turbot/steampipe-plugin-sdk/v4/grpc/proto"
-	"github.com/turbot/steampipe-plugin-sdk/v4/plugin"
-	"github.com/turbot/steampipe-plugin-sdk/v4/plugin/transform"
+	"github.com/turbot/steampipe-plugin-sdk/v5/grpc/proto"
+	"github.com/turbot/steampipe-plugin-sdk/v5/plugin"
+	"github.com/turbot/steampipe-plugin-sdk/v5/plugin/transform"
 )
 
 func tableDatadogMonitor(ctx context.Context) *plugin.Table {
@@ -55,7 +55,7 @@ func listMonitors(ctx context.Context, d *plugin.QueryData, _ *plugin.HydrateDat
 	// page := int64(0) // int64 | The page to start paginating from. If this argument is not specified, the request returns all monitors without pagination.
 	opts := datadog.ListMonitorsOptionalParameters{}
 
-	name := d.KeyColumnQualString("name")
+	name := d.EqualsQualString("name")
 	if name != "" {
 		opts.WithName(name)
 	}
@@ -69,7 +69,7 @@ func listMonitors(ctx context.Context, d *plugin.QueryData, _ *plugin.HydrateDat
 	for _, monitor := range resp {
 		d.StreamListItem(ctx, monitor)
 		// Check if context has been cancelled or if the limit has been hit (if specified)
-		if d.QueryStatus.RowsRemaining(ctx) == 0 {
+		if d.RowsRemaining(ctx) == 0 {
 			return nil, nil
 		}
 	}
