@@ -3,7 +3,7 @@ module github.com/turbot/steampipe-plugin-datadog
 go 1.21
 
 require (
-	github.com/DataDog/datadog-api-client-go v1.5.0
+	github.com/DataDog/datadog-api-client-go v1.16.0
 	github.com/pkg/errors v0.9.1
 	github.com/turbot/steampipe-plugin-sdk/v5 v5.6.2
 )
@@ -14,6 +14,7 @@ require (
 	cloud.google.com/go/compute/metadata v0.2.3 // indirect
 	cloud.google.com/go/iam v1.1.1 // indirect
 	cloud.google.com/go/storage v1.30.1 // indirect
+	github.com/DataDog/zstd v1.5.0 // indirect
 	github.com/XiaoMi/pegasus-go-client v0.0.0-20210427083443-f3b6b08bc4c2 // indirect
 	github.com/acarl005/stripansi v0.0.0-20180116102854-5a71ef0e047d // indirect
 	github.com/agext/levenshtein v1.2.2 // indirect
