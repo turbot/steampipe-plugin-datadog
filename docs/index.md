@@ -8,6 +8,7 @@ short_name: "datadog"
 description: "Steampipe plugin for querying dashboards, users, roles and more from Datadog."
 og_description: "Query Datadog with SQL! Open source CLI. No DB required."
 og_image: "/images/plugins/turbot/datadog-social-graphic.png"
+engines: ["steampipe", "sqlite", "postgres", "export"]
 ---
 
 # Datadog + Steampipe
