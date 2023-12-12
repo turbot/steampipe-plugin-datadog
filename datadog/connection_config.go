@@ -2,27 +2,14 @@ package datadog
 
 import (
 	"github.com/turbot/steampipe-plugin-sdk/v5/plugin"
-	"github.com/turbot/steampipe-plugin-sdk/v5/plugin/schema"
 )
 
 type datadogConfig struct {
-	APIKey *string `cty:"api_key"`
-	AppKey *string `cty:"app_key"`
+	APIKey *string `hcl:"api_key"`
+	AppKey *string `hcl:"app_key"`
 	// By default it is https://api.datadoghq.com/
 	// If working with "EU" version of Datadog, use https://api.datadoghq.eu/
-	ApiURL *string `cty:"api_url"`
-}
-
-var ConfigSchema = map[string]*schema.Attribute{
-	"api_key": {
-		Type: schema.TypeString,
-	},
-	"app_key": {
-		Type: schema.TypeString,
-	},
-	"api_url": {
-		Type: schema.TypeString,
-	},
+	ApiURL *string `hcl:"api_url"`
 }
 
 func ConfigInstance() interface{} {
