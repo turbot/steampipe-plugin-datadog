@@ -8,13 +8,14 @@ short_name: "datadog"
 description: "Steampipe plugin for querying dashboards, users, roles and more from Datadog."
 og_description: "Query Datadog with SQL! Open source CLI. No DB required."
 og_image: "/images/plugins/turbot/datadog-social-graphic.png"
+engines: ["steampipe", "sqlite", "postgres", "export"]
 ---
 
 # Datadog + Steampipe
 
 [Datadog](https://www.datadoghq.com/) is the essential monitoring and security platform for cloud applications.
 
-[Steampipe](https://steampipe.io) is an open source CLI to instantly query cloud APIs using SQL.
+[Steampipe](https://steampipe.io) is an open-source zero-ETL engine to instantly query cloud APIs using SQL.
 
 For example:
 
