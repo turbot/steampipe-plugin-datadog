@@ -1,3 +1,9 @@
+## v0.8.0 [2024-02-06]
+
+_Bug fixes_
+
+- Fixed the pagination in `datadog_monitor` table to correctly return data instead of an error.([#48](https://github.com/turbot/steampipe-plugin-datadog/pull/48)) (Thanks [@mdb](https://github.com/mdb) for the contribution!)
+
 ## v0.7.0 [2023-12-12]
 
 _What's new?_
