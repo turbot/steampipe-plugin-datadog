@@ -51,27 +51,42 @@ func listMonitors(ctx context.Context, d *plugin.QueryData, _ *plugin.HydrateDat
 		return nil, err
 	}
 
-	// https://github.com/DataDog/datadog-api-client-go/blob/master/api/v1/datadog/docs/MonitorsApi.md#listmonitors
-	// page := int64(0) // int64 | The page to start paginating from. If this argument is not specified, the request returns all monitors without pagination.
-	opts := datadog.ListMonitorsOptionalParameters{}
+	// https://datadoghq.dev/datadog-api-client-go/pkg/github.com/DataDog/datadog-api-client-go/v2/api/datadogV1/#ListMonitorsOptionalParameters
+	// page := int64(0) // int64 | The page to start paginating from. If this argument is not specified, the request returns all monitors without pagination,
+	// but may encounter 5XX errors in organizations with large volumes of monitors.
+	page := int64(0)
+	pageSize := int32(100)
+	opts := datadog.ListMonitorsOptionalParameters{
+		Page:     &page,
+		PageSize: &pageSize,
+	}
 
 	name := d.EqualsQualString("name")
 	if name != "" {
 		opts.WithName(name)
 	}
 
-	resp, _, err := apiClient.MonitorsApi.ListMonitors(ctx, opts)
-	if err != nil {
-		plugin.Logger(ctx).Error("datadog_monitor.listMonitors", "query_error", err)
-		return nil, err
-	}
-
-	for _, monitor := range resp {
-		d.StreamListItem(ctx, monitor)
-		// Check if context has been cancelled or if the limit has been hit (if specified)
-		if d.RowsRemaining(ctx) == 0 {
-			return nil, nil
+	for {
+		resp, _, err := apiClient.MonitorsApi.ListMonitors(ctx, opts)
+		if err != nil {
+			plugin.Logger(ctx).Error("datadog_monitor.listMonitors", "query_error", err)
+			return nil, err
 		}
+
+		for _, monitor := range resp {
+			d.StreamListItem(ctx, monitor)
+			// Check if context has been cancelled or if the limit has been hit (if specified)
+			if d.RowsRemaining(ctx) == 0 {
+				break
+			}
+		}
+
+		if len(resp) < int(pageSize) {
+			break
+		}
+
+		pageOffset := *opts.Page + 1
+		opts.Page = &pageOffset
 	}
 
 	return nil, nil
