@@ -15,6 +15,7 @@ connection "datadog" {
 
   # The API URL. By default it is pointed to "https://api.datadoghq.com/"
   # If working with the EU version of Datadog, use "https://api.datadoghq.eu/"
+  # If on a trial period, use "https://us5.datadoghq.com/"
   # Please note that this URL must not end with the /api/ path.
   # api_url = "https://api.datadoghq.com/"
 }
