@@ -7,7 +7,6 @@ import (
 	"io"
 	"net/http"
 	"net/url"
-	"os"
 
 	datadog "github.com/DataDog/datadog-api-client-go/api/v1/datadog"
 	"github.com/turbot/steampipe-plugin-sdk/v5/grpc/proto"
@@ -62,15 +61,10 @@ func listSLOs(ctx context.Context, d *plugin.QueryData, _ *plugin.HydrateData) (
 	}
 
 	steampipeConfig := GetConfig(d.Connection)
-	apiKey := os.Getenv("DD_CLIENT_API_KEY")
-	appKey := os.Getenv("DD_CLIENT_APP_KEY")
-	if steampipeConfig.APIKey != nil {
-		apiKey = *steampipeConfig.APIKey
-	}
-	if steampipeConfig.AppKey != nil {
-		appKey = *steampipeConfig.AppKey
-	}
-	// Prepare query parameters
+
+	keys := ctx.Value(datadog.ContextAPIKeys).(map[string]datadog.APIKey)
+	apiKey := keys["apiKeyAuth"].Key
+	appKey := keys["appKeyAuth"].Key
 
 	pageNumber := 0
 	for {
