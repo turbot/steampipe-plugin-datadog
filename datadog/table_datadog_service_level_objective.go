@@ -80,10 +80,9 @@ func listSLOs(ctx context.Context, d *plugin.QueryData, _ *plugin.HydrateData) (
 
 		fullUrl := fmt.Sprintf("%s?%s", *steampipeConfig.ApiURL+"api/v1/slo/search", params.Encode())
 
-		plugin.Logger(ctx).Error("Full URL : ", fullUrl)
 		buildReq, err := http.NewRequest("GET", fullUrl, nil)
 		if err != nil {
-			fmt.Println("Error creating the request:", err)
+			plugin.Logger(ctx).Error("Error creating the request:", err)
 			return nil, err
 		}
 
@@ -95,6 +94,7 @@ func listSLOs(ctx context.Context, d *plugin.QueryData, _ *plugin.HydrateData) (
 
 		response, err := SearchSLO(apiClient, buildReq)
 		if err != nil {
+			plugin.Logger(ctx).Error("datadog_service_level_objective.listSLOs", "api_error", err)
 			return nil, err
 		}
 
