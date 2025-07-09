@@ -49,10 +49,6 @@ func tableDatadogServiceLevelObjective(ctx context.Context) *plugin.Table {
 	}
 }
 
-// Using `apiClient.ServiceLevelObjectivesApi.SearchSLO` doesn't populate the response and returns empty rows.
-// Additionally, `apiClient.ServiceLevelObjectivesApi.ListSLOs(ctx, opts)` does not return SLOs of the "By Time Slice" type.
-// Therefore, we opted for a raw API call to list all the SLOs (as is done in the Datadog console). This approach also addresses the issue: https://github.com/turbot/steampipe-plugin-datadog/issues/63.
-
 func listSLOs(ctx context.Context, d *plugin.QueryData, _ *plugin.HydrateData) (interface{}, error) {
 	ctx, apiClient, err := connectV1(ctx, d)
 	if err != nil {
@@ -112,7 +108,7 @@ func listSLOs(ctx context.Context, d *plugin.QueryData, _ *plugin.HydrateData) (
 		}
 
 		// Check if we should continue pagination
-		if response.Meta.Pagination == nil || response.Meta.Pagination.LastNumber == nil || response.Meta.Pagination.LastNumber == nil || *response.Meta.Pagination.LastNumber == pageNumber {
+		if response.Meta.Pagination == nil || response.Meta.Pagination.LastNumber == nil || *response.Meta.Pagination.LastNumber == pageNumber {
 			break
 		}
 		pageNumber++
