@@ -27,24 +27,24 @@ func tableDatadogServiceLevelObjective(ctx context.Context) *plugin.Table {
 		},
 		Columns: []*plugin.Column{
 			// Top columns
-			{Name: "name", Type: proto.ColumnType_STRING, Description: "Name of the SLO.", Transform: transform.FromField("Attributes.Name")},
+			{Name: "name", Type: proto.ColumnType_STRING, Description: "Name of the SLO.", Transform: transform.FromField("Attributes.Name").Transform(transform.NullIfZeroValue)},
 			{Name: "id", Type: proto.ColumnType_STRING, Transform: transform.FromGo(), Description: "ID of the SLO."},
-			{Name: "creator_email", Type: proto.ColumnType_STRING, Transform: transform.FromField("Attributes.Creator.Email"), Description: "Email of the creator."},
+			{Name: "creator_email", Type: proto.ColumnType_STRING, Transform: transform.FromField("Attributes.Creator.Email").Transform(transform.NullIfZeroValue), Description: "Email of the creator."},
 			{Name: "created_at", Type: proto.ColumnType_TIMESTAMP, Transform: transform.FromField("Attributes.CreatedAt").Transform(transform.NullIfZeroValue).Transform(convertDatetime), Description: "Timestamp of the SLO creation."},
-			{Name: "type", Type: proto.ColumnType_STRING, Description: "The type of the SLO. For more information about type, see https://docs.datadoghq.com/monitors/service_level_objectives/."},
+			{Name: "type", Type: proto.ColumnType_STRING, Transform: transform.FromField("Attributes.SLOType").Transform(transform.NullIfZeroValue), Description: "The type of the SLO. For more information about type, see https://docs.datadoghq.com/monitors/service_level_objectives/."},
 
 			// Other useful columns
 			{Name: "modified_at", Type: proto.ColumnType_TIMESTAMP, Transform: transform.FromField("Attributes.ModifiedAt").Transform(transform.NullIfZeroValue).Transform(convertDatetime), Description: "Last timestamp when the monitor was edited."},
 
 			// JSON columns
 			{Name: "configured_alert_ids", Type: proto.ColumnType_JSON, Hydrate: getSLO, Description: "Get the IDs of SLO monitors that reference this SLO."},
-			{Name: "description", Type: proto.ColumnType_JSON, Description: "Description of the SLO.", Transform: transform.FromField("Attributes.Description")},
-			{Name: "groups", Type: proto.ColumnType_JSON, Description: "A list of (up to 20) monitor groups that narrow the scope of a monitor service level objective.", Transform: transform.FromField("Attributes.Groups")},
-			{Name: "monitor_ids", Type: proto.ColumnType_JSON, Description: "A list of monitor ids that defines the scope of a monitor service level objective.", Transform: transform.FromField("Attributes.MonitorIDs")},
-			{Name: "query", Type: proto.ColumnType_JSON, Description: "The Metric based SLOs use queries to determine the state. Shows associated query.", Transform: transform.FromField("Attributes.Query")},
-			{Name: "monitor_tags", Type: proto.ColumnType_JSON, Description: "If monitors that are associated with SLO have tags they will show here.", Transform: transform.FromField("Attributes.MonitorTags")},
-			{Name: "tags", Type: proto.ColumnType_JSON, Description: "Tags associated with SLO.", Transform: transform.FromField("Attributes.AllTags")},
-			{Name: "thresholds", Type: proto.ColumnType_JSON, Description: "Thresholds that are set for the SLOs.", Transform: transform.FromField("Attributes.Thresholds")},
+			{Name: "description", Type: proto.ColumnType_JSON, Description: "Description of the SLO.", Transform: transform.FromField("Attributes.Description").Transform(transform.NullIfZeroValue)},
+			{Name: "groups", Type: proto.ColumnType_JSON, Description: "A list of (up to 20) monitor groups that narrow the scope of a monitor service level objective.", Transform: transform.FromField("Attributes.Groups").Transform(transform.NullIfZeroValue)},
+			{Name: "monitor_ids", Type: proto.ColumnType_JSON, Description: "A list of monitor ids that defines the scope of a monitor service level objective.", Transform: transform.FromField("Attributes.MonitorIDs").Transform(transform.NullIfZeroValue)},
+			{Name: "query", Type: proto.ColumnType_JSON, Description: "The Metric based SLOs use queries to determine the state. Shows associated query.", Transform: transform.FromField("Attributes.Query").Transform(transform.NullIfZeroValue)},
+			{Name: "monitor_tags", Type: proto.ColumnType_JSON, Description: "If monitors that are associated with SLO have tags they will show here.", Transform: transform.FromField("Attributes.MonitorTags").Transform(transform.NullIfZeroValue)},
+			{Name: "tags", Type: proto.ColumnType_JSON, Description: "Tags associated with SLO.", Transform: transform.FromField("Attributes.AllTags").Transform(transform.NullIfZeroValue)},
+			{Name: "thresholds", Type: proto.ColumnType_JSON, Description: "Thresholds that are set for the SLOs.", Transform: transform.FromField("Attributes.Thresholds").Transform(transform.NullIfZeroValue)},
 		},
 	}
 }
@@ -68,14 +68,12 @@ func listSLOs(ctx context.Context, d *plugin.QueryData, _ *plugin.HydrateData) (
 
 	pageNumber := 0
 	for {
-
 		params := url.Values{}
 		params.Add("query", "")
 		params.Add("sort", "")
 		params.Add("include_facets", "false")
 		params.Add("include_permissions", "true")
 		params.Add("page[size]", "1")
-
 		params.Add("page[number]", fmt.Sprint(pageNumber))
 
 		fullUrl := fmt.Sprintf("%s?%s", *steampipeConfig.ApiURL+"api/v1/slo/search", params.Encode())
@@ -98,16 +96,23 @@ func listSLOs(ctx context.Context, d *plugin.QueryData, _ *plugin.HydrateData) (
 			return nil, err
 		}
 
-		for _, slo := range response.Data.Attributes.SLOs {
-			d.StreamListItem(ctx, slo.Data)
+		if response == nil || response.Data.Attributes.SLOs == nil {
+			break
+		}
 
-			// Check if context has been cancelled or if the limit has been hit (if specified)
-			if d.RowsRemaining(ctx) == 0 {
-				return nil, nil
+		for _, slo := range response.Data.Attributes.SLOs {
+			if slo.Data != nil {
+				d.StreamListItem(ctx, slo.Data)
+
+				// Check if context has been cancelled or if the limit has been hit (if specified)
+				if d.RowsRemaining(ctx) == 0 {
+					return nil, nil
+				}
 			}
 		}
 
-		if *response.Meta.Pagination.LastNumber == pageNumber {
+		// Check if we should continue pagination
+		if response.Meta.Pagination == nil || response.Meta.Pagination.LastNumber == nil || response.Meta.Pagination.LastNumber == nil || *response.Meta.Pagination.LastNumber == pageNumber {
 			break
 		}
 		pageNumber++
@@ -135,7 +140,6 @@ func SearchSLO(client *datadog.APIClient, req *http.Request) (*ApiResponse, erro
 }
 
 func getSLO(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateData) (interface{}, error) {
-
 	var sloID string
 	if h.Item != nil {
 		sloID = h.Item.(*SLOData).ID
