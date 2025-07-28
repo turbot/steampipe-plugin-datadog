@@ -1,13 +1,11 @@
 module github.com/turbot/steampipe-plugin-datadog
 
-go 1.23.1
-
-toolchain go1.23.2
+go 1.24
 
 require (
 	github.com/DataDog/datadog-api-client-go v1.5.0
 	github.com/pkg/errors v0.9.1
-	github.com/turbot/steampipe-plugin-sdk/v5 v5.11.7
+	github.com/turbot/steampipe-plugin-sdk/v5 v5.13.0
 )
 
 require (
@@ -95,7 +93,7 @@ require (
 	golang.org/x/exp v0.0.0-20240719175910-8a7402abbf56 // indirect
 	golang.org/x/mod v0.19.0 // indirect
 	golang.org/x/net v0.38.0 // indirect
-	golang.org/x/oauth2 v0.21.0 // indirect
+	golang.org/x/oauth2 v0.27.0 // indirect
 	golang.org/x/sync v0.12.0 // indirect
 	golang.org/x/sys v0.31.0 // indirect
 	golang.org/x/text v0.23.0 // indirect
