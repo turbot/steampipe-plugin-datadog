@@ -76,6 +76,10 @@ connection "datadog" {
   # The API URL. By default it is pointed to "https://api.datadoghq.com/"
   # If working with the EU version of Datadog, use "https://api.datadoghq.eu/"
   # Please note that this URL must not end with the /api/ path.
+  # Steampipe will resolve the API URL in below order:
+  #   1. The "api_url" specified here in the config
+  #   2. The `DD_CLIENT_API_URL` environment variable
+  #   3. Assume default value of "https://api.datadoghq.com/"
   # api_url = "https://api.datadoghq.com/"
 }
 ```
