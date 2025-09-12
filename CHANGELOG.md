@@ -1,3 +1,14 @@
+## v1.2.0 [2025-09-12]
+
+_What's new?_
+
+- Added support for the `DD_CLIENT_API_URL` environment variable to configure the `api_url` connection argument. Please refer to the [Configuration](https://hub.steampipe.io/plugins/turbot/datadog#configuration) section for more details. ([#92](https://github.com/turbot/steampipe-plugin-datadog/pull/92)) (Thanks [@l-teles](https://github.com/l-teles) for the contribution!)
+
+_Dependencies_
+
+- Recompiled plugin with Go version `1.24`. ([#89](https://github.com/turbot/steampipe-plugin-datadog/pull/89))
+- Recompiled plugin with [steampipe-plugin-sdk v5.13.0](https://github.com/turbot/steampipe-plugin-sdk/blob/develop/CHANGELOG.md#v5130-2025-07-21) that addresses critical and high vulnerabilities in dependent packages. ([#89](https://github.com/turbot/steampipe-plugin-datadog/pull/89))
+
 ## v1.1.1 [2025-04-18]
 
 _Bug fixes_
