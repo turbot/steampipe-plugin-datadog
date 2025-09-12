@@ -22,7 +22,10 @@ func connectV1(ctx context.Context, d *plugin.QueryData) (context.Context, *data
 	// Default to the env var settings
 	apiKey := os.Getenv("DD_CLIENT_API_KEY")
 	appKey := os.Getenv("DD_CLIENT_APP_KEY")
-	apiURL := "https://api.datadoghq.com/"
+	apiURL := os.Getenv("DD_CLIENT_API_URL")
+	if apiURL == "" {
+		apiURL = "https://api.datadoghq.com/"
+	}
 
 	// Prefer config settings
 	config := GetConfig(d.Connection)
@@ -93,7 +96,10 @@ func connectV2(ctx context.Context, d *plugin.QueryData) (context.Context, *data
 	// Default to the env var settings
 	apiKey := os.Getenv("DD_CLIENT_API_KEY")
 	appKey := os.Getenv("DD_CLIENT_APP_KEY")
-	apiURL := "https://api.datadoghq.com/"
+	apiURL := os.Getenv("DD_CLIENT_API_URL")
+	if apiURL == "" {
+		apiURL = "https://api.datadoghq.com/"
+	}
 
 	// Prefer config settings
 	config := GetConfig(d.Connection)
