@@ -107,13 +107,22 @@ func listSecurityMonitoringSignals(ctx context.Context, d *plugin.QueryData, _ *
 			}
 		}
 
+		// Check if there is a next page
 		if meta, ok := resp.GetMetaOk(); ok {
 			if page, pageOk := meta.GetPageOk(); pageOk {
 				if page.HasAfter() {
+					// Set the cursor for the next iteration
 					opts.WithPageCursor(page.GetAfter())
+				} else {
+					// No more pages, break the loop
+					break
 				}
+			} else {
+				// No page info, break the loop
+				break
 			}
 		} else {
+			// No meta info, break the loop
 			break
 		}
 	}
