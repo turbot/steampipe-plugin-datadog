@@ -1,3 +1,9 @@
+## v1.2.1 [2025-09-17]
+
+_Bug fixes_
+
+- Fixed pagination in `datadog_security_monitoring_signal` table. ([#94](https://github.com/turbot/steampipe-plugin-datadog/pull/94)) (Thanks [@l-teles](https://github.com/l-teles) for the contribution!)
+
 ## v1.2.0 [2025-09-12]
 
 _What's new?_
