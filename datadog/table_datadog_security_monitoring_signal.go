@@ -107,13 +107,18 @@ func listSecurityMonitoringSignals(ctx context.Context, d *plugin.QueryData, _ *
 			}
 		}
 
+		// Consolidate pagination logic to a single exit point
+		hasNextPage := false
 		if meta, ok := resp.GetMetaOk(); ok {
 			if page, pageOk := meta.GetPageOk(); pageOk {
 				if page.HasAfter() {
+					// Set the cursor for the next iteration
 					opts.WithPageCursor(page.GetAfter())
+					hasNextPage = true
 				}
 			}
-		} else {
+		}
+		if !hasNextPage {
 			break
 		}
 	}

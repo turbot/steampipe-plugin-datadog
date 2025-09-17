@@ -88,7 +88,7 @@ connection "datadog" {
 
 - `app_key` (required) - [Application keys](https://docs.datadoghq.com/account_management/api-app-keys/#application-keys) in conjunction with organization’s API key, give users access to Datadog’s programmatic API. Application keys are associated with the user account that created them and have the permissions and capabilities of the user who created them. [Get an application key](https://app.datadoghq.com/organization-settings/application-keys). May alternatively be set via the `DD_CLIENT_APP_KEY` environment variable.
 
-- `api_url` (optional) - The API URL used for all requests. Defaults to "https://api.datadoghq.com/". If working with the EU version, this should be changed to "https://api.datadoghq.eu/".
+- `api_url` (optional) - The API URL used for all requests. Defaults to "https://api.datadoghq.com/". If working with the EU version, this should be changed to "https://api.datadoghq.eu/".  May alternatively be set via the `DD_CLIENT_API_URL` environment variable.
 
 ## Get Involved
 
