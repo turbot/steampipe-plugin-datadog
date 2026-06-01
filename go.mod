@@ -3,7 +3,7 @@ module github.com/turbot/steampipe-plugin-datadog
 go 1.26.0
 
 require (
-	github.com/DataDog/datadog-api-client-go v1.5.0
+	github.com/DataDog/datadog-api-client-go v1.16.0
 	github.com/pkg/errors v0.9.1
 	github.com/turbot/steampipe-plugin-sdk/v5 v5.14.0
 )
@@ -13,6 +13,7 @@ require (
 	cloud.google.com/go/compute/metadata v0.3.0 // indirect
 	cloud.google.com/go/iam v1.1.6 // indirect
 	cloud.google.com/go/storage v1.38.0 // indirect
+	github.com/DataDog/zstd v1.5.0 // indirect
 	github.com/acarl005/stripansi v0.0.0-20180116102854-5a71ef0e047d // indirect
 	github.com/agext/levenshtein v1.2.3 // indirect
 	github.com/allegro/bigcache/v3 v3.1.0 // indirect
