@@ -5,9 +5,9 @@ import (
 	"fmt"
 
 	datadog "github.com/DataDog/datadog-api-client-go/api/v1/datadog"
-	"github.com/turbot/steampipe-plugin-sdk/v5/grpc/proto"
-	"github.com/turbot/steampipe-plugin-sdk/v5/plugin"
-	"github.com/turbot/steampipe-plugin-sdk/v5/plugin/transform"
+	"github.com/turbot/steampipe-plugin-sdk/v6/grpc/proto"
+	"github.com/turbot/steampipe-plugin-sdk/v6/plugin"
+	"github.com/turbot/steampipe-plugin-sdk/v6/plugin/transform"
 )
 
 func tableDatadogHost(ctx context.Context) *plugin.Table {
@@ -93,5 +93,5 @@ func listHosts(ctx context.Context, d *plugin.QueryData, _ *plugin.HydrateData) 
 		}
 		// Set the start point for the next page
 		opts.WithStart(count)
-	} 
+	}
 }
